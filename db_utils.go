@@ -44,3 +44,12 @@ func (db Db) SetTx(tx *gorm.DB) Db {
 
 	return db
 }
+
+func (db Db) checkTag() error {
+	return nil
+}
+
+func (db Db) Commit() Db {
+	db.tx.Commit()
+	return db
+}

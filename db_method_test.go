@@ -35,15 +35,22 @@ func TestDbSave(t *testing.T) {
 	db := test.Db()
 
 	// create table
+	// deleteTestTable()
 	migrateTestTable()
 
 	db = db.Save()
+	assert.NotNil(t, db.error)
+
+	test.Name = "test01"
+	db = test.Db().Begin().Save()
 	assert.Nil(t, db.error)
 
-	db.Begin().Save()
-	assert.Nil(t, db.error)
+	test.Name = "test02"
+	test.Db().SetTx(db.GetTx()).Save().Commit()
 
-	db.Save()
+	test.Name = "test03"
+	db = test.Db().Save()
+	assert.Nil(t, db.error)
 
 	// drop table
 	deleteTestTable()

@@ -7,7 +7,8 @@ import (
 )
 
 type TestTable struct {
-	Name string
+	Name string `valid:"required"`
+	Id   int    `gorm:"AUTO_INCREMENT"`
 }
 
 func (test *TestTable) Db() (db Db) {

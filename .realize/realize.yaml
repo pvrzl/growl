@@ -27,6 +27,8 @@ projects:
     - /
     ignore_paths:
     - vendor
+    - .git
+    - .realize
     exts:
     - .go
     - .yaml
