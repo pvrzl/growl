@@ -24,6 +24,6 @@ install:
 	@go install $(LDFLAGS)
 
 test:
-	@go test -coverprofile cover.out
+	@go test -coverprofile cover.out -v
 	@go tool cover -html=cover.out -o cover.html
 # @start cover.html

@@ -14,9 +14,11 @@ type dbWhereParams struct {
 }
 
 type Db struct {
-	data  interface{}
-	where []dbWhereParams
-	selct string
-	limit int
-	tx    *gorm.DB
+	data   interface{}
+	where  []dbWhereParams
+	selct  string
+	limit  int
+	tx     *gorm.DB
+	txMode bool
+	error  error
 }

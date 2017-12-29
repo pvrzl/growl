@@ -15,3 +15,4 @@ growl:
     channel: "channel"
   misc:
     localcache: true
+    log: true
