@@ -25,16 +25,12 @@ func (db Db) Save() Db {
 	}
 
 	var tx *gorm.DB
-	var err error
 
 	if db.txMode {
 		tx = db.tx
 	} else {
-		tx, err = Conn()
-		if err != nil {
-			db.error = err
-			return db
-		}
+		tx, db.error = Conn()
+
 	}
 
 	tx.Close()

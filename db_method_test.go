@@ -31,6 +31,20 @@ func TestDbSelect(t *testing.T) {
 
 func TestDbSave(t *testing.T) {
 	Config.Load()
+	test := new(TestTable)
+	db := test.Db()
+
+	// create table
 	migrateTestTable()
+
+	db = db.Save()
+	assert.Nil(t, db.error)
+
+	db.Begin().Save()
+	assert.Nil(t, db.error)
+
+	db.Save()
+
+	// drop table
 	deleteTestTable()
 }
