@@ -12,3 +12,12 @@ func (db Db) Select(qry string) Db {
 	db.selct = qry
 	return db
 }
+
+func (db Db) One() error {
+	db.limit = 1
+	return db.getter()
+}
+
+func (db Db) getter() error {
+	return nil
+}
