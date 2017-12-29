@@ -1,0 +1,17 @@
+growl:
+  database:
+    driver: mysql # required
+    url: root:root@/ # required
+    name: "" # required | recommended flag : ?charset=utf8&parseTime=True&loc=Local&sql_mode='ALLOW_INVALID_DATES'
+    prefix:  
+    singulartable: false # default : false
+    limit: 10 # default : 10
+    maxlimit: 32 # default : 25
+    timelayout: "02/01/2006"
+  redis:
+    host: localhost # default : localhost
+    port: "6379" # default : 6379
+    password: #default : ""
+    channel: "channel"
+  misc:
+    localcache: true

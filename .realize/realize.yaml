@@ -1,0 +1,41 @@
+settings:
+  resources:
+    outputs: outputs.log
+    logs: logs.log
+    errors: errors.log
+  server:
+    status: false
+    open: false
+    host: localhost
+    port: 3001
+projects:
+- name: growl
+  path: .
+  commands:
+    vet: false
+    fmt: false
+    test: false
+    generate: false
+    bin:
+      status: false
+    build:
+      status: false
+    run: false
+  watcher:
+    preview: true
+    paths:
+    - /
+    ignore_paths:
+    - vendor
+    exts:
+    - .go
+    - .yaml
+    scripts:
+    - type: before
+      command: make install
+      changed: true
+      startup: true
+    - type: before
+      command: make test
+      changed: true
+      startup: true
