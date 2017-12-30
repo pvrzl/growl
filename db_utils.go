@@ -53,3 +53,8 @@ func (db Db) Commit() Db {
 	db.tx.Commit()
 	return db
 }
+
+func (db Db) Rollback() Db {
+	db.tx.Rollback()
+	return db
+}

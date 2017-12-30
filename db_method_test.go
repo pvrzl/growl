@@ -33,9 +33,9 @@ func TestDbSave(t *testing.T) {
 	Config.Load()
 	test := new(TestTable)
 	db := test.Db()
+	var count int
 
 	// create table
-	// deleteTestTable()
 	migrateTestTable()
 
 	db = db.Save()
@@ -46,12 +46,25 @@ func TestDbSave(t *testing.T) {
 	assert.Nil(t, db.error)
 
 	test.Name = "test02"
-	test.Db().SetTx(db.GetTx()).Save().Commit()
+	test.Db().SetTx(db.GetTx()).Save().Rollback()
+
+	connDb.Model(new(TestTable)).Select("*").Count(&count)
+	assert.Equal(t, 0, count)
 
 	test.Name = "test03"
 	db = test.Db().Save()
 	assert.Nil(t, db.error)
 
-	// drop table
+	test.Name = "test04"
+	db = test.Db().Begin().Save().Commit()
+
+	connDb.Model(new(TestTable)).Select("*").Count(&count)
+	assert.Equal(t, 2, count)
+
+	assert.Equal(t, 1, connDb.DB().Stats().OpenConnections)
+
 	deleteTestTable()
+
+	// drop table
+	// deleteTestTable()
 }
