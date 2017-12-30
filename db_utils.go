@@ -58,3 +58,12 @@ func (db Db) Rollback() Db {
 	db.tx.Rollback()
 	return db
 }
+
+func (db Db) checkTx() (Db, *gorm.DB) {
+	if db.tx != nil {
+		return db, db.tx
+	}
+	db.tx, db.error = Conn()
+	db.tx = db.tx.Begin()
+	return db, db.tx
+}

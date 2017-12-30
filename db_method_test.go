@@ -17,16 +17,19 @@ func deleteTestTable() {
 }
 
 func TestDbWhere(t *testing.T) {
+	Config.Load()
 	db := Db{}
 	db = db.Where("test = ?", "test")
 	assert.Equal(t, "test = ?", db.where[0].qry)
 	assert.Equal(t, []interface{}{"test"}, db.where[0].params)
+	db.Commit()
 }
 
 func TestDbSelect(t *testing.T) {
 	db := Db{}
 	db = db.Select("c1, c2")
 	assert.Equal(t, "c1, c2", db.selct)
+	db.Commit()
 }
 
 func TestDbSave(t *testing.T) {

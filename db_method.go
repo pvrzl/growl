@@ -4,7 +4,6 @@ import (
 	"reflect"
 
 	valid "github.com/asaskevich/govalidator"
-	"github.com/jinzhu/gorm"
 )
 
 func (db Db) Where(qry string, params ...interface{}) Db {
@@ -12,11 +11,15 @@ func (db Db) Where(qry string, params ...interface{}) Db {
 		qry:    qry,
 		params: params,
 	})
+	db, tx := db.checkTx()
+	db.tx = tx.Where(qry, params...)
 	return db
 }
 
 func (db Db) Select(qry string) Db {
 	db.selct = qry
+	db, tx := db.checkTx()
+	db.tx = tx.Select(qry)
 	return db
 }
 
@@ -26,19 +29,7 @@ func (db Db) Save() Db {
 		return db
 	}
 
-	var tx *gorm.DB
-	var err error
-
-	if db.txMode {
-		tx = db.tx
-	} else {
-		tx, err = Conn()
-		tx = tx.Begin()
-		if err != nil {
-			db.error = err
-			return db
-		}
-	}
+	db, tx := db.checkTx()
 
 	if err := db.checkTag(); err != nil {
 		db.error = err
