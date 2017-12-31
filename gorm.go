@@ -38,6 +38,9 @@ func dbConnect() (db *gorm.DB, err error) {
 	}
 	db.SingularTable(config.Database.SingularTable)
 	db.LogMode(config.Misc.Log)
+	// db.DB().SetConnMaxLifetime(time.Minute * 5)
+	// db.DB().SetMaxIdleConns(0)
+	// db.DB().SetMaxOpenConns(5)
 	return db, nil
 }
 

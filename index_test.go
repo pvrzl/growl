@@ -18,9 +18,9 @@ func (test *TestTable) Db() (db Db) {
 
 type TestTableRelation struct {
 	Name        string    `valid:"required"`
-	Id          int       `gorm:"AUTO_INCREMENT"`
+	Id          int       `gorm:"AUTO_INCREMENT" json:"id"`
 	TestTable   TestTable `gorm:"ForeignKey:TestTableID;AssociationForeignKey:ID" valid:"-"`
-	TestTableID int       `valid:"required" generic:"exist:test_tables;existColumn:id"`
+	TestTableID int       `valid:"required" growl:"exist:test_tables;existColumn:id"`
 }
 
 func (test *TestTableRelation) Db() (db Db) {

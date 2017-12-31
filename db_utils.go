@@ -1,6 +1,8 @@
 package growl
 
 import (
+	"errors"
+	"reflect"
 	"strings"
 
 	"github.com/jinzhu/gorm"
@@ -45,9 +47,57 @@ func (db Db) SetTx(tx *gorm.DB) Db {
 	return db
 }
 
-// func (db Db) checkTag() error {
-// 	return nil
-// }
+func (db Db) checkTag() Db {
+	v := reflect.ValueOf(db.data).Elem()
+	t := reflect.TypeOf(db.data).Elem()
+
+	db = db.getTag(v, t)
+	for i := 0; i < v.NumField(); i++ {
+		if growl, ok := db.growlTag[i]; ok {
+			if growlValue, ok2 := growl["exist"]; ok2 {
+				value := GetValue(v.Field(i))
+				var dummy struct{}
+				_, tx := db.checkTx()
+				err := tx.Table(growlValue).Select(growl["existColumn"]).Where(growl["existColumn"]+" = ?", value).First(&dummy).Error
+				if err != nil {
+					if !db.txMode {
+						tx.Rollback()
+					}
+					db.error = errors.New("error on processing " + t.Field(i).Name + " : " + err.Error())
+					return db
+				}
+			}
+		}
+	}
+
+	return db
+}
+
+func (db Db) getTag(v reflect.Value, t reflect.Type) Db {
+
+	growlTag := make(map[int]map[string]string)
+	jsonTag := make(map[int]string)
+
+	for i := 0; i < v.NumField(); i++ {
+		growls, ok := t.Field(i).Tag.Lookup("growl")
+		if ok {
+			growlBody := make(map[string]string)
+			for _, growl := range strings.Split(growls, ";") {
+				kv := strings.Split(growl, ":")
+				growlBody[kv[0]] = kv[1]
+			}
+			growlTag[i] = growlBody
+		}
+		json, ok := t.Field(i).Tag.Lookup("json")
+		if ok {
+			jsonTag[i] = json
+		}
+	}
+
+	db.growlTag = growlTag
+	db.jsonTag = jsonTag
+	return db
+}
 
 func (db Db) Commit() Db {
 	db.tx.Commit()

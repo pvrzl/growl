@@ -37,3 +37,18 @@ func GetStructName(data interface{}) string {
 		return t.Name()
 	}
 }
+
+func GetValue(v reflect.Value) interface{} {
+	if v.Kind() == reflect.Ptr {
+		if v.IsNil() {
+			return nil
+		}
+		return v.Elem().Interface()
+	}
+
+	return v.Interface()
+}
+
+func OpenConnectionStats() int {
+	return connDb.DB().Stats().OpenConnections
+}

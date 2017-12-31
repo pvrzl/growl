@@ -79,15 +79,15 @@ func TestDbSave(t *testing.T) {
 	testRelation := new(TestTableRelation)
 	testRelation.Name = "testRelation01"
 	testRelation.TestTableID = 3
-	testRelation.Db().Preload("TestTable").Save()
+	testRelation.Db().Save()
 	// fmt.Printf("test relation data : %+v", testRelation)
 
 	connDb.Model(new(TestTableRelation)).Select("*").Count(&count)
 	assert.Equal(t, 1, count)
-	assert.Equal(t, 3, testRelation.TestTable.Id)
-	assert.Equal(t, "test03", testRelation.TestTable.Name)
+	// assert.Equal(t, 3, testRelation.TestTable.Id)
+	// assert.Equal(t, "test03", testRelation.TestTable.Name)
 
-	assert.Equal(t, 1, connDb.DB().Stats().OpenConnections)
+	assert.Equal(t, 1, OpenConnectionStats())
 
 	deleteTestTable()
 
