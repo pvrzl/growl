@@ -41,13 +41,13 @@ func (db Db) Save() Db {
 
 	db, tx := db.checkTx()
 
-	if err := db.checkTag(); err != nil {
-		db.error = err
-		if !db.txMode {
-			tx.Rollback()
-		}
-		return db
-	}
+	// if err := db.checkTag(); err != nil {
+	// 	db.error = err
+	// 	if !db.txMode {
+	// 		tx.Rollback()
+	// 	}
+	// 	return db
+	// }
 
 	id := reflect.ValueOf(db.data).Elem().FieldByName("Id")
 	if id.IsValid() {
