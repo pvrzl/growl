@@ -7,11 +7,23 @@ import (
 )
 
 type TestTable struct {
-	Name string `valid:"required"`
+	Name string `valid:"required" gorm:"unique_index"`
 	Id   int    `gorm:"AUTO_INCREMENT"`
 }
 
 func (test *TestTable) Db() (db Db) {
+	db.data = test
+	return db
+}
+
+type TestTableRelation struct {
+	Name        string    `valid:"required"`
+	Id          int       `gorm:"AUTO_INCREMENT"`
+	TestTable   TestTable `gorm:"ForeignKey:TestTableID;AssociationForeignKey:ID" valid:"-"`
+	TestTableID int       `valid:"required" generic:"exist:test_tables;existColumn:id"`
+}
+
+func (test *TestTableRelation) Db() (db Db) {
 	db.data = test
 	return db
 }

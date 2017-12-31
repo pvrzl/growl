@@ -16,10 +16,20 @@ func (db Db) Where(qry string, params ...interface{}) Db {
 	return db
 }
 
-func (db Db) Select(qry string) Db {
+func (db Db) Select(qry string, filters ...func(string) string) Db {
+	for _, filter := range filters {
+		qry = filter(qry)
+	}
 	db.selct = qry
 	db, tx := db.checkTx()
 	db.tx = tx.Select(qry)
+	return db
+}
+
+func (db Db) Preload(qry string) Db {
+	db.preload = append(db.preload, qry)
+	db, tx := db.checkTx()
+	db.tx = tx.Preload(qry)
 	return db
 }
 
@@ -44,12 +54,16 @@ func (db Db) Save() Db {
 		id.Set(reflect.Zero(id.Type()))
 	}
 
-	if err := tx.Save(db.data).Error; err != nil {
+	if err := tx.Create(db.data).Error; err != nil {
 		if !db.txMode {
 			tx.Rollback()
 		}
 		db.error = err
 		return db
+	}
+
+	if len(db.preload) > 0 {
+		tx.First(db.data)
 	}
 
 	if !db.txMode {
