@@ -68,3 +68,20 @@ func (db Db) Save() Db {
 
 	return db
 }
+
+func (db Db) First() Db {
+	db, tx := db.checkTx()
+	if err := tx.First(db.data).Error; err != nil {
+		if !db.txMode {
+			tx.Rollback()
+		}
+		db.error = err
+		return db
+	}
+
+	if !db.txMode {
+		tx.Commit()
+	}
+
+	return db
+}

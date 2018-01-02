@@ -2,6 +2,7 @@ package growl
 
 import (
 	"errors"
+	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -42,4 +43,12 @@ func TestTx(t *testing.T) {
 	assert.Equal(t, false, db.txMode)
 
 	assert.Nil(t, db.GetTx())
+}
+
+func TestGetValue(t *testing.T) {
+	a := "test"
+	assert.Equal(t, "test", GetValue(reflect.ValueOf(&a)).(string))
+
+	var b string
+	assert.Equal(t, "", GetValue(reflect.ValueOf(&b)).(string))
 }

@@ -40,9 +40,6 @@ func GetStructName(data interface{}) string {
 
 func GetValue(v reflect.Value) interface{} {
 	if v.Kind() == reflect.Ptr {
-		if v.IsNil() {
-			return nil
-		}
 		return v.Elem().Interface()
 	}
 

@@ -84,6 +84,10 @@ func TestDbSave(t *testing.T) {
 
 	connDb.Model(new(TestTableRelation)).Select("*").Count(&count)
 	assert.Equal(t, 1, count)
+
+	testRelation.TestTableID = 1
+	db = testRelation.Db().Save()
+	assert.NotNil(t, db.Error())
 	// assert.Equal(t, 3, testRelation.TestTable.Id)
 	// assert.Equal(t, "test03", testRelation.TestTable.Name)
 
@@ -93,4 +97,37 @@ func TestDbSave(t *testing.T) {
 
 	// drop table
 	// deleteTestTable()
+}
+
+func TestDbFirst(t *testing.T) {
+	Config.Load()
+	test := new(TestTable)
+	var count int
+
+	// create table
+	migrateTestTable()
+
+	test.Name = "test01"
+	test.Db().Save()
+
+	testRelation := new(TestTableRelation)
+	testRelation.Name = "testRelation01"
+	testRelation.TestTableID = 1
+	testRelation.Db().Save()
+
+	connDb.Model(new(TestTableRelation)).Select("*").Count(&count)
+	assert.Equal(t, 1, count)
+
+	testRelation2 := new(TestTableRelation)
+	testRelation2.Db().Preload("TestTable").First()
+
+	assert.Equal(t, 1, testRelation2.TestTable.Id)
+
+	db := testRelation2.Db().Preload("TestTable").Where("id = ?", "7").First()
+	assert.NotNil(t, db.Error())
+
+	assert.Equal(t, 1, OpenConnectionStats())
+
+	deleteTestTable()
+
 }
