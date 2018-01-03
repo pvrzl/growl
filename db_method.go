@@ -33,6 +33,22 @@ func (db Db) Preload(qry string) Db {
 	return db
 }
 
+func (db Db) Join(qry string, params ...interface{}) Db {
+	db.join = append(db.join, dbWhereParams{
+		qry:    qry,
+		params: params,
+	})
+	db, tx := db.checkTx()
+	db.tx = tx.Joins(qry, params...)
+	return db
+}
+
+// func (db Db) Association(qry string) Db {
+// 	db, tx := db.checkTx()
+// 	db.tx = tx.Association(column)
+// 	return db
+// }
+
 func (db Db) Save() Db {
 	if _, err := valid.ValidateStruct(db.data); err != nil {
 		db.error = err

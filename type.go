@@ -16,6 +16,7 @@ type dbWhereParams struct {
 type Db struct {
 	data     interface{}
 	where    []dbWhereParams
+	join     []dbWhereParams
 	selct    string
 	preload  []string
 	limit    int
