@@ -43,11 +43,40 @@ func (db Db) Join(qry string, params ...interface{}) Db {
 	return db
 }
 
-// func (db Db) Association(qry string) Db {
-// 	db, tx := db.checkTx()
-// 	db.tx = tx.Association(column)
-// 	return db
-// }
+func (db Db) Association(qry string) Db {
+	db.association = qry
+	return db
+}
+
+func (db Db) OrderBy(qry string, filters ...func(string) string) Db {
+	for _, filter := range filters {
+		qry = filter(qry)
+	}
+	db.orderBy = qry
+	db, tx := db.checkTx()
+	db.tx = tx.Order(qry)
+	return db
+}
+
+func (db Db) Limit(qry int, filters ...func(int) int) Db {
+	for _, filter := range filters {
+		qry = filter(qry)
+	}
+	db.limit = qry
+	db, tx := db.checkTx()
+	db.tx = tx.Limit(qry)
+	return db
+}
+
+func (db Db) Offset(qry int, filters ...func(int) int) Db {
+	for _, filter := range filters {
+		qry = filter(qry)
+	}
+	db.offset = qry
+	db, tx := db.checkTx()
+	db.tx = tx.Offset(qry)
+	return db
+}
 
 func (db Db) Save() Db {
 	if _, err := valid.ValidateStruct(db.data); err != nil {

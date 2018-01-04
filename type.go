@@ -14,15 +14,18 @@ type dbWhereParams struct {
 }
 
 type Db struct {
-	data     interface{}
-	where    []dbWhereParams
-	join     []dbWhereParams
-	selct    string
-	preload  []string
-	limit    int
-	tx       *gorm.DB
-	txMode   bool
-	growlTag map[int]map[string]string
-	jsonTag  map[int]string
-	error    error
+	data        interface{}
+	where       []dbWhereParams
+	join        []dbWhereParams
+	selct       string
+	preload     []string
+	association string
+	limit       int
+	offset      int
+	orderBy     string
+	tx          *gorm.DB
+	txMode      bool
+	growlTag    map[int]map[string]string
+	jsonTag     map[int]string
+	error       error
 }
