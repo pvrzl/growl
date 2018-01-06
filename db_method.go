@@ -78,6 +78,16 @@ func (db Db) Offset(qry int, filters ...func(int) int) Db {
 	return db
 }
 
+func (db Db) Replace(data interface{}) Db {
+	db, tx := db.checkTx()
+	db.error = tx.Model(db.data).Association(db.association).Replace(data).Error
+	if !db.txMode {
+		tx.Commit()
+	}
+
+	return db
+}
+
 func (db Db) Save() Db {
 	if _, err := valid.ValidateStruct(db.data); err != nil {
 		db.error = err
@@ -114,9 +124,118 @@ func (db Db) Save() Db {
 	return db
 }
 
+func (db Db) ForceUpdate() Db {
+	if _, err := valid.ValidateStruct(db.data); err != nil {
+		db.error = err
+		return db
+	}
+
+	db, tx := db.checkTx()
+
+	db = db.checkTag()
+	if db.error != nil {
+		if !db.txMode {
+			tx.Rollback()
+		}
+		return db
+	}
+
+	if err := tx.Save(db.data).Error; err != nil {
+		if !db.txMode {
+			tx.Rollback()
+		}
+		db.error = err
+		return db
+	}
+
+	if !db.txMode {
+		tx.Commit()
+	}
+
+	return db
+}
+
+func (db Db) Update(data map[string]interface{}) Db {
+
+	db, tx := db.checkTx()
+
+	if err := tx.Update(data).Error; err != nil {
+		if !db.txMode {
+			tx.Rollback()
+		}
+		db.error = err
+		return db
+	}
+
+	if !db.txMode {
+		tx.Commit()
+	}
+
+	return db
+}
+
 func (db Db) First() Db {
 	db, tx := db.checkTx()
 	if err := tx.First(db.data).Error; err != nil {
+		if !db.txMode {
+			tx.Rollback()
+		}
+		db.error = err
+		return db
+	}
+
+	if !db.txMode {
+		tx.Commit()
+	}
+
+	return db
+}
+
+func (db Db) Find(data interface{}) Db {
+	db, tx := db.checkTx()
+	if err := tx.Find(data).Error; err != nil {
+		if !db.txMode {
+			tx.Rollback()
+		}
+		db.error = err
+		return db
+	}
+
+	if !db.txMode {
+		tx.Commit()
+	}
+
+	return db
+}
+
+func (db Db) Count(data interface{}) Db {
+	db, tx := db.checkTx()
+	if err := tx.Count(data).Error; err != nil {
+		if !db.txMode {
+			tx.Rollback()
+		}
+		db.error = err
+		return db
+	}
+
+	if !db.txMode {
+		tx.Commit()
+	}
+
+	return db
+}
+
+func (db Db) Delete() Db {
+	db, tx := db.checkTx()
+	if err := tx.First(db.data).Error; err != nil {
+		if !db.txMode {
+			tx.Rollback()
+		}
+		db.error = err
+		return db
+	}
+
+	if err := tx.Delete(db.data).Error; err != nil {
 		if !db.txMode {
 			tx.Rollback()
 		}
