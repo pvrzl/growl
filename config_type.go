@@ -19,6 +19,7 @@ type growlYamlConfig struct {
 			Duration time.Duration
 			Password string
 			Channel  string
+			Enable   bool
 		}
 		Misc struct {
 			LocalCache bool

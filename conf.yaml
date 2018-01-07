@@ -13,6 +13,7 @@ growl:
     port: "6379" # default : 6379
     password: #default : ""
     channel: "channel"
+    enable: true
   misc:
     localcache: true
     log: true

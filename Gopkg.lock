@@ -14,10 +14,39 @@
   version = "v1.1.0"
 
 [[projects]]
+  name = "github.com/go-redis/cache"
+  packages = [
+    ".",
+    "internal/lrucache",
+    "internal/singleflight"
+  ]
+  revision = "b68067d78498568593602bc54229e68b54b50ca4"
+  version = "v6.3.2"
+
+[[projects]]
+  name = "github.com/go-redis/redis"
+  packages = [
+    ".",
+    "internal",
+    "internal/consistenthash",
+    "internal/hashtag",
+    "internal/pool",
+    "internal/proto"
+  ]
+  revision = "73b70592cdaa9e6abdfcfbf97b4a90d80728c836"
+  version = "v6.8.0"
+
+[[projects]]
   name = "github.com/go-sql-driver/mysql"
   packages = ["."]
   revision = "a0583e0143b1624142adab07e0e97fe106d99561"
   version = "v1.3"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/golang/protobuf"
+  packages = ["proto"]
+  revision = "1e59b77b52bf8e4b449a57e6f79f21226d571845"
 
 [[projects]]
   name = "github.com/jinzhu/gorm"
@@ -47,6 +76,37 @@
   version = "v1.1.4"
 
 [[projects]]
+  branch = "master"
+  name = "golang.org/x/net"
+  packages = ["context"]
+  revision = "42fe2e1c20de1054d3d30f82cc9fb5b41e2e3767"
+
+[[projects]]
+  name = "google.golang.org/appengine"
+  packages = [
+    ".",
+    "datastore",
+    "internal",
+    "internal/app_identity",
+    "internal/base",
+    "internal/datastore",
+    "internal/log",
+    "internal/modules",
+    "internal/remote_api"
+  ]
+  revision = "150dc57a1b433e64154302bdc40b6bb8aefa313a"
+  version = "v1.0.0"
+
+[[projects]]
+  name = "gopkg.in/vmihailenco/msgpack.v2"
+  packages = [
+    ".",
+    "codes"
+  ]
+  revision = "f4f8982de4ef0de18be76456617cc3f5d8d8141e"
+  version = "v2.9.1"
+
+[[projects]]
   branch = "v2"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
@@ -55,6 +115,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "76c5a8a91523223da4426b12165f030ecf1002c2581b2ec062c62cf191edd4fb"
+  inputs-digest = "51dd3549aa7981c8d84818066d44dbb628295fcffa7ee91303400f19c502f259"
   solver-name = "gps-cdcl"
   solver-version = 1
