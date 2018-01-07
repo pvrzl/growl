@@ -1,13 +1,17 @@
 package growl
 
 import (
+	"time"
+
 	"github.com/go-redis/cache"
 	"github.com/go-redis/redis"
 
+	gocache "github.com/patrickmn/go-cache"
 	msgpack "gopkg.in/vmihailenco/msgpack.v2"
 )
 
 var connRedis *redis.Client
+var localCache = gocache.New(24*time.Hour, 30*time.Minute)
 
 func connectRedis() *redis.Client {
 	config := YamlConfig.Growl
