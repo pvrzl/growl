@@ -1,6 +1,7 @@
 package growl
 
 import (
+	"reflect"
 	"time"
 
 	"github.com/go-redis/cache"
@@ -11,7 +12,7 @@ import (
 )
 
 var connRedis *redis.Client
-var localCache = gocache.New(24*time.Hour, 30*time.Minute)
+var LocalCache = gocache.New(24*time.Hour, 30*time.Minute)
 
 func connectRedis() *redis.Client {
 	config := YamlConfig.Growl
@@ -57,16 +58,32 @@ func PingCache() error {
 
 func FlushCache() {
 	Redis().FlushAll()
+	LocalCache.Flush()
 }
 
 func GetCache(key string, data interface{}) (err error) {
 	config := YamlConfig.Growl
 
-	if config.Redis.Enable {
-		err = Codec().Get(key, data)
+	if config.Misc.LocalCache {
+		cacheData, found := LocalCache.Get(key)
+		if !found {
+			err = ErrCacheNotFound
+		} else {
+			x := reflect.ValueOf(data)
+			x.Elem().Set(reflect.ValueOf(cacheData).Elem())
+			return
+		}
 	}
 
-	if !config.Redis.Enable {
+	if config.Redis.Enable {
+		err = Codec().Get(key, data)
+		if err == nil {
+			LocalCache.Set(key, data, gocache.DefaultExpiration)
+			return
+		}
+	}
+
+	if !config.Redis.Enable && !config.Misc.LocalCache {
 		err = ErrCacheDisabled
 	}
 
@@ -75,6 +92,10 @@ func GetCache(key string, data interface{}) (err error) {
 
 func SetCache(key string, data interface{}) {
 	config := YamlConfig.Growl
+
+	if config.Misc.LocalCache {
+		LocalCache.Set(key, data, gocache.DefaultExpiration)
+	}
 
 	if config.Redis.Enable {
 		Codec().Set(&cache.Item{
@@ -87,6 +108,9 @@ func SetCache(key string, data interface{}) {
 
 func DeleteCache(key string) {
 	config := YamlConfig.Growl
+	if config.Misc.LocalCache {
+		LocalCache.Delete(key)
+	}
 	if config.Redis.Enable {
 		Codec().Delete(key)
 	}

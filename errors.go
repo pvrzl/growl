@@ -8,4 +8,5 @@ var (
 	ErrDbUrlRequired    = errors.New("database url is required")
 	ErrDbNameRequired   = errors.New("database name is required")
 	ErrCacheDisabled    = errors.New("cache is disabled")
+	ErrCacheNotFound    = errors.New("cache not found")
 )
