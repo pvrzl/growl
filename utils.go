@@ -1,6 +1,8 @@
 package growl
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"os"
 	"reflect"
 	"unicode"
@@ -48,4 +50,10 @@ func GetValue(v reflect.Value) interface{} {
 
 func OpenConnectionStats() int {
 	return connDb.DB().Stats().OpenConnections
+}
+
+func MD5(plain string) string {
+	hasher := md5.New()
+	hasher.Write([]byte(plain))
+	return hex.EncodeToString(hasher.Sum(nil))
 }

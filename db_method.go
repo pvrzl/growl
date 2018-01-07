@@ -175,6 +175,11 @@ func (db Db) Update(data map[string]interface{}) Db {
 }
 
 func (db Db) First() Db {
+	err := GetCache(MD5(db.GenerateSelectRaw()), db.data)
+	if err == nil {
+		return db
+	}
+
 	db, tx := db.checkTx()
 	if err := tx.First(db.data).Error; err != nil {
 		if !db.txMode {
@@ -188,10 +193,28 @@ func (db Db) First() Db {
 		tx.Commit()
 	}
 
+	if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
+		var ids string
+		// SetCache(MD5(db.GenerateSelectRaw()), db.data)
+		id := reflect.ValueOf(db.data).Elem().FieldByName("Id")
+		if id.IsValid() {
+			ids = valid.ToString(id.Interface().(int))
+		}
+		if ids != "" {
+
+		}
+
+	}
+
 	return db
 }
 
 func (db Db) Find(data interface{}) Db {
+	err := GetCache(MD5(db.GenerateSelectRaw()), data)
+	if err == nil {
+		return db
+	}
+
 	db, tx := db.checkTx()
 	if err := tx.Find(data).Error; err != nil {
 		if !db.txMode {
@@ -209,6 +232,11 @@ func (db Db) Find(data interface{}) Db {
 }
 
 func (db Db) Count(data interface{}) Db {
+	err := GetCache(MD5(db.GenerateSelectRaw())+"count", data)
+	if err == nil {
+		return db
+	}
+
 	db, tx := db.checkTx()
 	if err := tx.Count(data).Error; err != nil {
 		if !db.txMode {

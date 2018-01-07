@@ -24,7 +24,10 @@ func TestDbWhere(t *testing.T) {
 	db = db.Where("test = ?", "test")
 	assert.Equal(t, "test = ?", db.where[0].qry)
 	assert.Equal(t, []interface{}{"test"}, db.where[0].params)
-	db.Commit()
+	if db.tx != nil {
+		db.Commit()
+	}
+
 }
 
 func TestDbSelect(t *testing.T) {
@@ -34,7 +37,9 @@ func TestDbSelect(t *testing.T) {
 
 	db = db.Select("hello world", func(s string) string { return strings.Replace(s, "world", "ef", -1) })
 	assert.Equal(t, "hello ef", db.selct)
-	db.Commit()
+	if db.tx != nil {
+		db.Commit()
+	}
 }
 
 func TestDbSave(t *testing.T) {

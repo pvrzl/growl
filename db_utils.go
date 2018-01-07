@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"strings"
 
+	valid "github.com/asaskevich/govalidator"
 	"github.com/jinzhu/gorm"
 	"github.com/jinzhu/inflection"
 )
@@ -122,4 +123,42 @@ func (db Db) Model(data interface{}) Db {
 	db, tx := db.checkTx()
 	db.tx = tx.Model(data)
 	return db
+}
+
+func (db Db) GenerateSelectRaw() string {
+	table := db.GetTableName()
+	var where, join, selct, offset, limit, order, raw string
+
+	for i, obj := range db.where {
+		if i != 0 {
+			where += " AND "
+		}
+		where += "(" + obj.qry + ")"
+		for _, param := range obj.params {
+			strings.Replace(where, "?", valid.ToString(param), 1)
+		}
+	}
+
+	for i, obj := range db.join {
+		if i != 0 {
+			join += " AND "
+		}
+		join += "(" + obj.qry + ")"
+		for _, param := range obj.params {
+			strings.Replace(join, "?", valid.ToString(param), 1)
+		}
+	}
+
+	if db.selct == "" {
+		selct = "*"
+	} else {
+		selct = db.selct
+	}
+
+	offset = " OFFSET " + valid.ToString(db.offset)
+	limit = " LIMIT " + valid.ToString(db.limit)
+	order = db.orderBy
+
+	raw = "[ SELECT " + selct + " FROM " + table + join + " WHERE " + where + limit + offset + order + " ][ Preload : " + strings.Join(db.preload, ",") + " ]"
+	return raw
 }

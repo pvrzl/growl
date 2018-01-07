@@ -24,6 +24,8 @@ func loadConfig(path string) error {
 		return err
 	}
 
+	FlushCache()
+
 	return nil
 }
 
