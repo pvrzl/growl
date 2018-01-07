@@ -117,3 +117,9 @@ func (db Db) checkTx() (Db, *gorm.DB) {
 	db.tx = db.tx.Begin()
 	return db, db.tx
 }
+
+func (db Db) Model(data interface{}) Db {
+	db, tx := db.checkTx()
+	db.tx = tx.Model(data)
+	return db
+}

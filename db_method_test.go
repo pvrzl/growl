@@ -131,3 +131,65 @@ func TestDbFirst(t *testing.T) {
 	deleteTestTable()
 
 }
+
+func TestDbJoin(t *testing.T) {
+	Config.Load()
+	migrateTestTable()
+
+	var count int
+
+	test := new(TestTable)
+	test.Name = "test01"
+	test.Db().Save()
+
+	test.Name = "test02"
+	test.Db().Save()
+
+	new(TestTable).Db().Model(new(TestTable)).Select("*").Count(&count)
+	assert.Equal(t, 2, count)
+
+	testRelation := new(TestTableRelation)
+	testRelation.Name = "testRelation01"
+	testRelation.TestTableID = 1
+	testRelation.Db().Save()
+
+	new(TestTableRelation).Db().Model(new(TestTableRelation)).Select("*").Count(&count)
+	assert.Equal(t, 1, count)
+
+	tests := []TestTable{}
+
+	test.Name = ""
+	test.Id = 0
+	test.Db().Join("inner join test_table_relations on test_tables.id=test_table_relations.id ").OrderBy("id desc", func(s string) string { return s }).Find(&tests).Limit(1, func(s int) int { return s }).Offset(0, func(s int) int { return s })
+
+	assert.Equal(t, "test01", tests[0].Name)
+
+	test.Name = "test03"
+	test.Db().Save()
+
+	testRelation.Db().Model(new(TestTableRelation)).Association("TestTable").Replace(test)
+	testRelation.Db().Preload("TestTable").First()
+	assert.Equal(t, "test03", testRelation.TestTable.Name)
+
+	test.Name = ""
+	db := test.Db().ForceUpdate()
+	assert.NotNil(t, db.error)
+
+	test.Name = "testUpdate"
+	test.Db().ForceUpdate()
+	test.Db().First()
+
+	assert.Equal(t, "testUpdate", test.Name)
+
+	test.Db().Model(test).Update(map[string]interface{}{"name": "testUpdate02"})
+	test.Db().First()
+
+	test.Db().Delete()
+	test.Db().Model(test).Count(&count)
+	assert.Equal(t, 0, count)
+
+	assert.Equal(t, "testUpdate02", test.Name)
+
+	deleteTestTable()
+
+}
