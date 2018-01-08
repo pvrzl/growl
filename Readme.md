@@ -4,7 +4,7 @@
 [![codecov](https://codecov.io/gh/homina/growl/branch/master/graph/badge.svg)](https://codecov.io/gh/homina/growl)
 
 #### Overview
-Gorm is another layer for https://github.com/jinzhu/gorm, https://github.com/go-redis/redis and https://github.com/patrickmn/go-cache
+Growl is another layer for https://github.com/jinzhu/gorm, https://github.com/go-redis/redis and https://github.com/patrickmn/go-cache
 
 - Simple config file for db, redis
 - ORM like
