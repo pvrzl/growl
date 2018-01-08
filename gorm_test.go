@@ -13,9 +13,6 @@ func TestDbConnect(t *testing.T) {
 	_, err := dbConnect()
 	assert.Equal(t, nil, err)
 
-	YamlConfig.Growl.Database.Name = "growl_dummy"
-	_, err = dbConnect()
-	assert.NotEqual(t, nil, err)
 }
 
 func TestDb(t *testing.T) {

@@ -2,6 +2,7 @@ package growl
 
 import (
 	"errors"
+	"log"
 
 	"github.com/jinzhu/gorm"
 )
@@ -34,7 +35,9 @@ func dbConnect() (db *gorm.DB, err error) {
 	url := config.Database.Url + config.Database.Name
 	db, err = gorm.Open(config.Database.Driver, url)
 	if err != nil {
-		return db, errors.New("error while connecting to db : " + err.Error())
+		newErr := errors.New("error while connecting to db : " + err.Error())
+		log.Panic(newErr)
+		return db, newErr
 	}
 	db.SingularTable(config.Database.SingularTable)
 	db.LogMode(config.Misc.Log)
