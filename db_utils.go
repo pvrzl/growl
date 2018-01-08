@@ -176,3 +176,8 @@ func DeleteLookup(id string) {
 	}
 	DeleteCache(id)
 }
+
+func (db Db) SetData(data interface{}) Db {
+	db.data = data
+	return db
+}
