@@ -165,7 +165,8 @@ func TestDbJoin(t *testing.T) {
 
 	test.Name = ""
 	test.Id = 0
-	test.Db().Join("inner join test_table_relations on test_tables.id=test_table_relations.id ").OrderBy("id desc", func(s string) string { return s }).Find(&tests).Limit(1, func(s int) int { return s }).Offset(0, func(s int) int { return s })
+	test.Db().Join("inner join test_table_relations on test_tables.id=test_table_relations.id and test_tables.id = ?", 1).Join("").Where("test_tables.id = ?", 1).Where("test_tables.name = ?", "test01").Find(&tests).Limit(1, func(s int) int { return s }).Offset(0, func(s int) int { return s }).OrderBy("id desc", func(s string) string { return s })
+	test.Db().Join("inner join test_table_relations on test_tables.id=test_table_relations.id and test_tables.id = ?", 1).Join("").Where("test_tables.id = ?", 1).Where("test_tables.name = ?", "test01").Find(&tests).Limit(1, func(s int) int { return s }).Offset(0, func(s int) int { return s }).OrderBy("id desc", func(s string) string { return s })
 
 	assert.Equal(t, "test01", tests[0].Name)
 
@@ -188,13 +189,30 @@ func TestDbJoin(t *testing.T) {
 
 	test.Db().Model(test).UpdateMap(map[string]interface{}{"name": "testUpdate02"})
 	test.Db().First()
+	assert.Equal(t, "testUpdate02", test.Name)
 
+	test.Name = "testUpdate03"
+	test.Db().Model(test).Update()
+	test.Db().First()
+	assert.Equal(t, "testUpdate03", test.Name)
+
+	test.Id = 4
+	db = test.Db().Delete()
+	assert.NotNil(t, db.error)
+
+	test.Id = 3
 	test.Db().Delete()
 	test.Db().Model(test).Count(&count)
 	assert.Equal(t, 0, count)
 
-	assert.Equal(t, "testUpdate02", test.Name)
+	test.Db().Model(test).Count(&count)
+	assert.Equal(t, 0, count)
 
 	deleteTestTable()
 
+}
+
+func TestCache(t *testing.T) {
+	Config.Load()
+	PingCache()
 }

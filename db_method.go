@@ -209,7 +209,7 @@ func (db Db) UpdateMap(data map[string]interface{}) Db {
 	return db
 }
 
-func (db Db) Update(data map[string]interface{}) Db {
+func (db Db) Update() Db {
 	if _, err := valid.ValidateStruct(db.data); err != nil {
 		db.error = err
 		return db
@@ -225,7 +225,7 @@ func (db Db) Update(data map[string]interface{}) Db {
 		return db
 	}
 
-	if err := tx.Update(data).Error; err != nil {
+	if err := tx.Update(db.data).Error; err != nil {
 		if !db.txMode {
 			tx.Rollback()
 		}
