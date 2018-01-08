@@ -1,5 +1,8 @@
 # Growl
 
+[![Build Status](https://travis-ci.org/homina/growl.svg?branch=master)](https://travis-ci.org/homina/growl)
+[![codecov](https://codecov.io/gh/homina/growl/branch/master/graph/badge.svg)](https://codecov.io/gh/homina/growl)
+
 #### Example
 ```
 package main
