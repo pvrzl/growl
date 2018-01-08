@@ -3,3 +3,4 @@ vendor/*
 *.DS_Store
 cover.out
 cover.html
+conf.local.yaml

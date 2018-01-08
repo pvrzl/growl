@@ -1,0 +1,30 @@
+language: go
+sudo: false
+go:
+  - 1.6.x
+  - 1.7.x
+  - 1.8.x
+  - 1.9.x
+  - master
+
+services: 
+  - mysql
+  - redis-server
+
+git:
+  depth: 2
+
+before_install:
+  - mysql -e 'CREATE DATABASE growl_test;'
+
+install:
+  - make dep
+  - make install
+
+go_import_path: github.com/homina/growl
+
+script:
+  - make test
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
