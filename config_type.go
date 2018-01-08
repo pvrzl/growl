@@ -22,8 +22,9 @@ type growlYamlConfig struct {
 			Enable   bool
 		}
 		Misc struct {
-			LocalCache bool
-			Log        bool
+			LocalCache  bool
+			Log         bool
+			FlushAtInit bool
 		}
 	}
 }

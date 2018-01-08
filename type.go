@@ -29,3 +29,7 @@ type Db struct {
 	jsonTag     map[int]string
 	error       error
 }
+
+type lookUp struct {
+	keys []string
+}

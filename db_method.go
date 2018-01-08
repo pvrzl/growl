@@ -121,6 +121,11 @@ func (db Db) Save() Db {
 		tx.Commit()
 	}
 
+	if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
+		DeleteLookup(db.LookupKey("count"))
+		DeleteLookup(db.GetTableName())
+	}
+
 	return db
 }
 
@@ -152,10 +157,20 @@ func (db Db) ForceUpdate() Db {
 		tx.Commit()
 	}
 
+	if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
+		idv := reflect.ValueOf(db.data).Elem().FieldByName("Id")
+		if idv.IsValid() {
+			id := valid.ToString(idv.Interface().(int))
+			if id != "" {
+				DeleteLookup(db.LookupKey(id))
+			}
+		}
+	}
+
 	return db
 }
 
-func (db Db) Update(data map[string]interface{}) Db {
+func (db Db) UpdateMap(data map[string]interface{}) Db {
 
 	db, tx := db.checkTx()
 
@@ -171,10 +186,62 @@ func (db Db) Update(data map[string]interface{}) Db {
 		tx.Commit()
 	}
 
+	if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
+		idv := reflect.ValueOf(db.data).Elem().FieldByName("Id")
+		if idv.IsValid() {
+			id := valid.ToString(idv.Interface().(int))
+			if id != "" {
+				DeleteLookup(db.LookupKey(id))
+			}
+		}
+	}
+
+	return db
+}
+
+func (db Db) Update(data map[string]interface{}) Db {
+	if _, err := valid.ValidateStruct(db.data); err != nil {
+		db.error = err
+		return db
+	}
+
+	db, tx := db.checkTx()
+
+	db = db.checkTag()
+	if db.error != nil {
+		if !db.txMode {
+			tx.Rollback()
+		}
+		return db
+	}
+
+	if err := tx.Update(data).Error; err != nil {
+		if !db.txMode {
+			tx.Rollback()
+		}
+		db.error = err
+		return db
+	}
+
+	if !db.txMode {
+		tx.Commit()
+	}
+
+	if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
+		idv := reflect.ValueOf(db.data).Elem().FieldByName("Id")
+		if idv.IsValid() {
+			id := valid.ToString(idv.Interface().(int))
+			if id != "" {
+				DeleteLookup(db.LookupKey(id))
+			}
+		}
+	}
+
 	return db
 }
 
 func (db Db) First() Db {
+	db.limit = 1
 	err := GetCache(MD5(db.GenerateSelectRaw()), db.data)
 	if err == nil {
 		return db
@@ -194,16 +261,18 @@ func (db Db) First() Db {
 	}
 
 	if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
-		var ids string
-		// SetCache(MD5(db.GenerateSelectRaw()), db.data)
-		id := reflect.ValueOf(db.data).Elem().FieldByName("Id")
-		if id.IsValid() {
-			ids = valid.ToString(id.Interface().(int))
+		key := MD5(db.GenerateSelectRaw())
+		SetCache(key, db.data)
+		idv := reflect.ValueOf(db.data).Elem().FieldByName("Id")
+		if idv.IsValid() {
+			id := valid.ToString(idv.Interface().(int))
+			if id != "" {
+				lu := new(lookUp)
+				GetCache(db.LookupKey(id), lu)
+				lu.keys = append(lu.keys, key)
+				SetCache(id, lu)
+			}
 		}
-		if ids != "" {
-
-		}
-
 	}
 
 	return db
@@ -228,11 +297,33 @@ func (db Db) Find(data interface{}) Db {
 		tx.Commit()
 	}
 
+	if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
+		key := MD5(db.GenerateSelectRaw())
+		SetCache(key, data)
+		v := reflect.ValueOf(data).Elem()
+		for i := 0; i < v.Len(); i++ {
+			idv := v.Index(i).FieldByName("Id")
+			if idv.IsValid() {
+				id := valid.ToString(idv.Interface().(int))
+				if id != "" {
+					lu := new(lookUp)
+					GetCache(db.LookupKey(id), lu)
+					lu.keys = append(lu.keys, key)
+					SetCache(id, lu)
+				}
+			}
+		}
+		tableLU := new(lookUp)
+		GetCache(db.GetTableName(), tableLU)
+		tableLU.keys = append(tableLU.keys, key)
+		SetCache(db.GetTableName(), tableLU)
+	}
+
 	return db
 }
 
 func (db Db) Count(data interface{}) Db {
-	err := GetCache(MD5(db.GenerateSelectRaw())+"count", data)
+	err := GetCache(MD5(db.GenerateSelectRaw())+"-count", data)
 	if err == nil {
 		return db
 	}
@@ -250,6 +341,16 @@ func (db Db) Count(data interface{}) Db {
 		tx.Commit()
 	}
 
+	if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
+		key := MD5(db.GenerateSelectRaw()) + "-count"
+		SetCache(key, data)
+		id := db.LookupKey("count")
+		lu := new(lookUp)
+		GetCache(id, lu)
+		lu.keys = append(lu.keys, key)
+		SetCache(id, lu)
+	}
+
 	return db
 }
 
@@ -263,6 +364,12 @@ func (db Db) Delete() Db {
 		return db
 	}
 
+	var id string
+	idv := reflect.ValueOf(db.data).Elem().FieldByName("Id")
+	if idv.IsValid() {
+		id = valid.ToString(idv.Interface().(int))
+	}
+
 	if err := tx.Delete(db.data).Error; err != nil {
 		if !db.txMode {
 			tx.Rollback()
@@ -273,6 +380,15 @@ func (db Db) Delete() Db {
 
 	if !db.txMode {
 		tx.Commit()
+	}
+
+	if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
+		DeleteLookup(db.LookupKey("count"))
+
+		if id != "" {
+			DeleteLookup(db.LookupKey(id))
+		}
+
 	}
 
 	return db

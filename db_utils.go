@@ -162,3 +162,17 @@ func (db Db) GenerateSelectRaw() string {
 	raw = "[ SELECT " + selct + " FROM " + table + join + " WHERE " + where + limit + offset + order + " ][ Preload : " + strings.Join(db.preload, ",") + " ]"
 	return raw
 }
+
+func (db Db) LookupKey(id string) string {
+	table := db.GetTableName()
+	return table + "-" + id
+}
+
+func DeleteLookup(id string) {
+	lu := new(lookUp)
+	GetCache(id, lu)
+	for _, key := range lu.keys {
+		DeleteCache(key)
+	}
+	DeleteCache(id)
+}

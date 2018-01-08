@@ -24,7 +24,9 @@ func loadConfig(path string) error {
 		return err
 	}
 
-	FlushCache()
+	if YamlConfig.Growl.Misc.FlushAtInit {
+		FlushCache()
+	}
 
 	return nil
 }

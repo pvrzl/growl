@@ -17,3 +17,4 @@ growl:
   misc:
     localcache: true
     log: true
+    flushatinit: true
