@@ -85,6 +85,16 @@ func (db Db) Replace(data interface{}) Db {
 		tx.Commit()
 	}
 
+	if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
+		idv := reflect.ValueOf(db.data).Elem().FieldByName("Id")
+		if idv.IsValid() {
+			id := valid.ToString(idv.Interface().(int))
+			if id != "" {
+				DeleteLookup(db.LookupKey(id))
+			}
+		}
+	}
+
 	return db
 }
 
@@ -123,7 +133,7 @@ func (db Db) Save() Db {
 
 	if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
 		DeleteLookup(db.LookupKey("count"))
-		DeleteLookup(db.GetTableName())
+		// DeleteLookup(db.GetTableName())
 	}
 
 	return db
@@ -313,10 +323,10 @@ func (db Db) Find(data interface{}) Db {
 				}
 			}
 		}
-		tableLU := new(lookUp)
-		GetCache(db.GetTableName(), tableLU)
-		tableLU.keys = append(tableLU.keys, key)
-		SetCache(db.GetTableName(), tableLU)
+		// tableLU := new(lookUp)
+		// GetCache(db.GetTableName(), tableLU)
+		// tableLU.keys = append(tableLU.keys, key)
+		// SetCache(db.GetTableName(), tableLU)
 	}
 
 	return db
