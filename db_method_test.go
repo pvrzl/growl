@@ -216,3 +216,31 @@ func TestCache(t *testing.T) {
 	Config.Load()
 	PingCache()
 }
+
+func TestFind(t *testing.T) {
+	Config.Load()
+
+	var count int
+
+	migrateTestTable()
+
+	test := new(TestTable)
+	test.Name = "test01"
+	test.Db().Save()
+
+	test.Name = "test02"
+	test.Db().Save()
+
+	test.Db().Model(new(TestTable)).Count(&count)
+	assert.Equal(t, 2, count)
+
+	testGet := new(TestTable)
+	testGet.Db().Where("id = ?", 1).First()
+	assert.Equal(t, "test01", testGet.Name)
+
+	testGet.Id = 0
+	testGet.Db().Where("id = ?", 2).First()
+	assert.Equal(t, "test02", testGet.Name)
+
+	deleteTestTable()
+}

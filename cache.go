@@ -1,6 +1,7 @@
 package growl
 
 import (
+	"fmt"
 	"reflect"
 	"time"
 
@@ -65,9 +66,13 @@ func GetCache(key string, data interface{}) (err error) {
 	config := YamlConfig.Growl
 
 	if config.Misc.LocalCache {
+		fmt.Println("get key", key)
 		cacheData, found := LocalCache.Get(key)
+		fmt.Println("get found", found)
+		fmt.Println("get cachedata", cacheData)
 		if !found {
 			err = ErrCacheNotFound
+			return
 		} else {
 			x := reflect.ValueOf(data)
 			x.Elem().Set(reflect.ValueOf(cacheData).Elem())
@@ -91,6 +96,7 @@ func GetCache(key string, data interface{}) (err error) {
 }
 
 func SetCache(key string, data interface{}) {
+	fmt.Println("set key", key)
 	config := YamlConfig.Growl
 
 	if config.Misc.LocalCache {

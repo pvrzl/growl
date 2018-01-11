@@ -1,6 +1,7 @@
 package growl
 
 import (
+	"fmt"
 	"reflect"
 
 	valid "github.com/asaskevich/govalidator"
@@ -253,6 +254,7 @@ func (db Db) Update() Db {
 func (db Db) First() Db {
 	db.limit = 1
 	err := GetCache(MD5(db.GenerateSelectRaw()), db.data)
+	fmt.Println("err ", err)
 	if err == nil {
 		return db
 	}
@@ -280,7 +282,7 @@ func (db Db) First() Db {
 				lu := new(lookUp)
 				GetCache(db.LookupKey(id), lu)
 				lu.keys = append(lu.keys, key)
-				SetCache(id, lu)
+				SetCache(db.LookupKey(id), lu)
 			}
 		}
 	}
@@ -319,7 +321,7 @@ func (db Db) Find(data interface{}) Db {
 					lu := new(lookUp)
 					GetCache(db.LookupKey(id), lu)
 					lu.keys = append(lu.keys, key)
-					SetCache(id, lu)
+					SetCache(db.LookupKey(id), lu)
 				}
 			}
 		}

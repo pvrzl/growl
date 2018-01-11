@@ -136,7 +136,7 @@ func (db Db) GenerateSelectRaw() string {
 		}
 		where += "(" + obj.qry + ")"
 		for _, param := range obj.params {
-			strings.Replace(where, "?", fmt.Sprint(param), 1)
+			join = strings.Replace(where, "?", fmt.Sprint(param), 1)
 		}
 	}
 
@@ -146,7 +146,7 @@ func (db Db) GenerateSelectRaw() string {
 		}
 		join += "(" + obj.qry + ")"
 		for _, param := range obj.params {
-			strings.Replace(join, "?", fmt.Sprint(param), 1)
+			join = strings.Replace(join, "?", fmt.Sprint(param), 1)
 		}
 	}
 
@@ -162,7 +162,7 @@ func (db Db) GenerateSelectRaw() string {
 
 	raw = "[ SELECT " + selct + " FROM " + table + join + " WHERE " + where + limit + offset + order + " ][ Preload : " + strings.Join(db.preload, ",") + " ]"
 
-	fmt.Println(raw)
+	// fmt.Println(raw)
 	return raw
 }
 
