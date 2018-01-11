@@ -2,7 +2,7 @@ growl:
   database:
     driver: mysql # required
     # url: root:@/
-    url: root:tralala@/ # required
+    url: root:@/ # required
     name: "growl_test?charset=utf8&parseTime=True&loc=Local&sql_mode='ALLOW_INVALID_DATES'" # required | recommended flag : 
     prefix:  
     singulartable: false # default : false
