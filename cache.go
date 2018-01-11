@@ -66,14 +66,14 @@ func GetCache(key string, data interface{}) (err error) {
 	config := YamlConfig.Growl
 
 	if config.Misc.LocalCache {
-		fmt.Println("get key", key)
 		cacheData, found := LocalCache.Get(key)
-		fmt.Println("get found", found)
-		fmt.Println("get cachedata", cacheData)
-		if !found {
-			err = ErrCacheNotFound
-			return
-		} else {
+		if config.Misc.Log {
+			fmt.Println("get local key", key)
+			fmt.Println("get local found", found)
+			fmt.Println("get local cachedata", cacheData)
+		}
+
+		if found {
 			x := reflect.ValueOf(data)
 			x.Elem().Set(reflect.ValueOf(cacheData).Elem())
 			return
@@ -82,6 +82,12 @@ func GetCache(key string, data interface{}) (err error) {
 
 	if config.Redis.Enable {
 		err = Codec().Get(key, data)
+		if config.Misc.Log {
+			fmt.Println("get redis key", key)
+			fmt.Println("get redis found", err)
+			fmt.Println("get redis data", data)
+		}
+
 		if err == nil {
 			LocalCache.Set(key, data, gocache.DefaultExpiration)
 			return

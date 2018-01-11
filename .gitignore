@@ -4,3 +4,4 @@ vendor/*
 cover.out
 cover.html
 conf.local.yaml
+conf.yaml
