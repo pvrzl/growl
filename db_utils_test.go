@@ -28,8 +28,10 @@ func TestGetError(t *testing.T) {
 }
 
 func TestTx(t *testing.T) {
+
 	test := new(TestTable)
-	db := test.Db()
+
+	db := test.Db().SetData(test)
 	db = db.Begin()
 	assert.NotEqual(t, nil, db.tx)
 	assert.Equal(t, true, db.txMode)

@@ -2,6 +2,7 @@ package growl
 
 import (
 	"errors"
+	"fmt"
 	"reflect"
 	"strings"
 
@@ -135,7 +136,7 @@ func (db Db) GenerateSelectRaw() string {
 		}
 		where += "(" + obj.qry + ")"
 		for _, param := range obj.params {
-			strings.Replace(where, "?", valid.ToString(param), 1)
+			strings.Replace(where, "?", fmt.Sprint(param), 1)
 		}
 	}
 
@@ -145,7 +146,7 @@ func (db Db) GenerateSelectRaw() string {
 		}
 		join += "(" + obj.qry + ")"
 		for _, param := range obj.params {
-			strings.Replace(join, "?", valid.ToString(param), 1)
+			strings.Replace(join, "?", fmt.Sprint(param), 1)
 		}
 	}
 
