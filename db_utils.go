@@ -161,6 +161,8 @@ func (db Db) GenerateSelectRaw() string {
 	order = db.orderBy
 
 	raw = "[ SELECT " + selct + " FROM " + table + join + " WHERE " + where + limit + offset + order + " ][ Preload : " + strings.Join(db.preload, ",") + " ]"
+
+	fmt.Println(raw)
 	return raw
 }
 
