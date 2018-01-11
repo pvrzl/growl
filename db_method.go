@@ -255,11 +255,14 @@ func (db Db) First() Db {
 	db.limit = 1
 	err := GetCache(MD5(db.GenerateSelectRaw()), db.data)
 	fmt.Println("err ", err)
+	db, tx := db.checkTx()
 	if err == nil {
+		if !db.txMode {
+			tx.Commit()
+		}
 		return db
 	}
 
-	db, tx := db.checkTx()
 	if err := tx.First(db.data).Error; err != nil {
 		if !db.txMode {
 			tx.Rollback()
@@ -292,11 +295,14 @@ func (db Db) First() Db {
 
 func (db Db) Find(data interface{}) Db {
 	err := GetCache(MD5(db.GenerateSelectRaw()), data)
+	db, tx := db.checkTx()
 	if err == nil {
+		if !db.txMode {
+			tx.Commit()
+		}
 		return db
 	}
 
-	db, tx := db.checkTx()
 	if err := tx.Find(data).Error; err != nil {
 		if !db.txMode {
 			tx.Rollback()
@@ -336,11 +342,14 @@ func (db Db) Find(data interface{}) Db {
 
 func (db Db) Count(data interface{}) Db {
 	err := GetCache(MD5(db.GenerateSelectRaw())+"-count", data)
+	db, tx := db.checkTx()
 	if err == nil {
+		if !db.txMode {
+			tx.Commit()
+		}
 		return db
 	}
 
-	db, tx := db.checkTx()
 	if err := tx.Count(data).Error; err != nil {
 		if !db.txMode {
 			tx.Rollback()
