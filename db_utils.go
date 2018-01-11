@@ -63,7 +63,7 @@ func (db Db) checkTag() Db {
 				err := tx.Table(growlValue).Select(growl["existColumn"]).Where(growl["existColumn"]+" = ?", value).First(&dummy).Error
 				if err != nil {
 					if !db.txMode {
-						tx.Rollback()
+						// tx.Rollback()
 					}
 					db.error = errors.New("error on processing " + t.Field(i).Name + " : " + err.Error())
 					return db
@@ -116,7 +116,7 @@ func (db Db) checkTx() (Db, *gorm.DB) {
 		return db, db.tx
 	}
 	db.tx, db.error = Conn()
-	db.tx = db.tx.Begin()
+	// db.tx = db.tx.Begin()
 	return db, db.tx
 }
 

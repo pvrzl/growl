@@ -83,7 +83,7 @@ func (db Db) Replace(data interface{}) Db {
 	db, tx := db.checkTx()
 	db.error = tx.Model(db.data).Association(db.association).Replace(data).Error
 	if !db.txMode {
-		tx.Commit()
+		// tx.Commit()
 	}
 
 	if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
@@ -110,7 +110,7 @@ func (db Db) Save() Db {
 	db = db.checkTag()
 	if db.error != nil {
 		if !db.txMode {
-			tx.Rollback()
+			// tx.Rollback()
 		}
 		return db
 	}
@@ -122,14 +122,14 @@ func (db Db) Save() Db {
 
 	if err := tx.Create(db.data).Error; err != nil {
 		if !db.txMode {
-			tx.Rollback()
+			// tx.Rollback()
 		}
 		db.error = err
 		return db
 	}
 
 	if !db.txMode {
-		tx.Commit()
+		// tx.Commit()
 	}
 
 	if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
@@ -151,21 +151,21 @@ func (db Db) ForceUpdate() Db {
 	db = db.checkTag()
 	if db.error != nil {
 		if !db.txMode {
-			tx.Rollback()
+			// tx.Rollback()
 		}
 		return db
 	}
 
 	if err := tx.Save(db.data).Error; err != nil {
 		if !db.txMode {
-			tx.Rollback()
+			// tx.Rollback()
 		}
 		db.error = err
 		return db
 	}
 
 	if !db.txMode {
-		tx.Commit()
+		// tx.Commit()
 	}
 
 	if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
@@ -187,14 +187,14 @@ func (db Db) UpdateMap(data map[string]interface{}) Db {
 
 	if err := tx.Update(data).Error; err != nil {
 		if !db.txMode {
-			tx.Rollback()
+			// tx.Rollback()
 		}
 		db.error = err
 		return db
 	}
 
 	if !db.txMode {
-		tx.Commit()
+		// tx.Commit()
 	}
 
 	if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
@@ -221,21 +221,21 @@ func (db Db) Update() Db {
 	db = db.checkTag()
 	if db.error != nil {
 		if !db.txMode {
-			tx.Rollback()
+			// tx.Rollback()
 		}
 		return db
 	}
 
 	if err := tx.Update(db.data).Error; err != nil {
 		if !db.txMode {
-			tx.Rollback()
+			// tx.Rollback()
 		}
 		db.error = err
 		return db
 	}
 
 	if !db.txMode {
-		tx.Commit()
+		// tx.Commit()
 	}
 
 	if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
@@ -258,21 +258,21 @@ func (db Db) First() Db {
 	db, tx := db.checkTx()
 	if err == nil {
 		if !db.txMode {
-			tx.Commit()
+			// tx.Commit()
 		}
 		return db
 	}
 
 	if err := tx.First(db.data).Error; err != nil {
 		if !db.txMode {
-			tx.Rollback()
+			// tx.Rollback()
 		}
 		db.error = err
 		return db
 	}
 
 	if !db.txMode {
-		tx.Commit()
+		// tx.Commit()
 	}
 
 	if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
@@ -298,21 +298,21 @@ func (db Db) Find(data interface{}) Db {
 	db, tx := db.checkTx()
 	if err == nil {
 		if !db.txMode {
-			tx.Commit()
+			// tx.Commit()
 		}
 		return db
 	}
 
 	if err := tx.Find(data).Error; err != nil {
 		if !db.txMode {
-			tx.Rollback()
+			// tx.Rollback()
 		}
 		db.error = err
 		return db
 	}
 
 	if !db.txMode {
-		tx.Commit()
+		// tx.Commit()
 	}
 
 	if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
@@ -345,21 +345,21 @@ func (db Db) Count(data interface{}) Db {
 	db, tx := db.checkTx()
 	if err == nil {
 		if !db.txMode {
-			tx.Commit()
+			// tx.Commit()
 		}
 		return db
 	}
 
 	if err := tx.Count(data).Error; err != nil {
 		if !db.txMode {
-			tx.Rollback()
+			// tx.Rollback()
 		}
 		db.error = err
 		return db
 	}
 
 	if !db.txMode {
-		tx.Commit()
+		// tx.Commit()
 	}
 
 	if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
@@ -379,7 +379,7 @@ func (db Db) Delete() Db {
 	db, tx := db.checkTx()
 	if err := tx.First(db.data).Error; err != nil {
 		if !db.txMode {
-			tx.Rollback()
+			// tx.Rollback()
 		}
 		db.error = err
 		return db
@@ -393,14 +393,14 @@ func (db Db) Delete() Db {
 
 	if err := tx.Delete(db.data).Error; err != nil {
 		if !db.txMode {
-			tx.Rollback()
+			// tx.Rollback()
 		}
 		db.error = err
 		return db
 	}
 
 	if !db.txMode {
-		tx.Commit()
+		// tx.Commit()
 	}
 
 	if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
