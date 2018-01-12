@@ -1,7 +1,6 @@
 package growl
 
 import (
-	"fmt"
 	"reflect"
 
 	valid "github.com/asaskevich/govalidator"
@@ -254,7 +253,6 @@ func (db Db) Update() Db {
 func (db Db) First() Db {
 	db.limit = 1
 	err := GetCache(MD5(db.GenerateSelectRaw()), db.data)
-	fmt.Println("err ", err)
 	db, tx := db.checkTx()
 	if err == nil {
 		if !db.txMode {

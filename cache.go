@@ -77,6 +77,8 @@ func GetCache(key string, data interface{}) (err error) {
 			x := reflect.ValueOf(data)
 			x.Elem().Set(reflect.ValueOf(cacheData).Elem())
 			return
+		} else {
+			err = ErrCacheNotFound
 		}
 	}
 
