@@ -1,7 +1,7 @@
 package growl
 
 import (
-	"fmt"
+	"log"
 	"reflect"
 	"time"
 
@@ -68,9 +68,9 @@ func GetCache(key string, data interface{}) (err error) {
 	if config.Misc.LocalCache {
 		cacheData, found := LocalCache.Get(key)
 		if config.Misc.Log {
-			fmt.Println("get local key", key)
-			fmt.Println("get local found", found)
-			fmt.Println("get local cachedata", cacheData)
+			// fmt.Println("get local key", key)
+			log.Println("get local found : ", found)
+			// fmt.Println("get local cachedata", cacheData)
 		}
 
 		if found {
@@ -83,9 +83,9 @@ func GetCache(key string, data interface{}) (err error) {
 	if config.Redis.Enable {
 		err = Codec().Get(key, data)
 		if config.Misc.Log {
-			fmt.Println("get redis key", key)
-			fmt.Println("get redis found", err)
-			fmt.Println("get redis data", data)
+			// fmt.Println("get redis key", key)
+			log.Println("get redis found : ", err)
+			// fmt.Println("get redis data", data)
 		}
 
 		if err == nil {
@@ -102,7 +102,7 @@ func GetCache(key string, data interface{}) (err error) {
 }
 
 func SetCache(key string, data interface{}) {
-	fmt.Println("set key", key)
+
 	config := YamlConfig.Growl
 
 	if config.Misc.LocalCache {
