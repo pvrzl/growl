@@ -4,6 +4,7 @@ import (
 	"reflect"
 
 	valid "github.com/asaskevich/govalidator"
+	"github.com/jinzhu/gorm"
 )
 
 func (db Db) Where(qry string, params ...interface{}) Db {
@@ -140,6 +141,7 @@ func (db Db) Save() Db {
 
 	if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
 		DeleteLookup(db.LookupKey("count"))
+		DeleteLookup(db.LookupKey("empty"))
 		DeleteLookup(db.GetTableName())
 	}
 
@@ -271,6 +273,27 @@ func (db Db) First() Db {
 	if err := tx.First(db.data).Error; err != nil {
 		if !db.txMode {
 			// tx.Rollback()
+		}
+		if err == gorm.ErrRecordNotFound {
+			if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
+				key := MD5(db.GenerateSelectRaw())
+				SetCache(key, db.data)
+				idv := reflect.ValueOf(db.data).Elem().FieldByName("Id")
+				if idv.IsValid() {
+					id := valid.ToString(idv.Interface().(int))
+					if id != "" {
+						lu := new(lookUp)
+						GetCache(db.LookupKey(id), lu)
+						lu.keys = append(lu.keys, key)
+						SetCache(db.LookupKey(id), lu)
+					} else {
+						lu := new(lookUp)
+						GetCache(db.LookupKey("empty"), lu)
+						lu.keys = append(lu.keys, key)
+						SetCache(db.LookupKey("empty"), lu)
+					}
+				}
+			}
 		}
 		db.error = err
 		return db
