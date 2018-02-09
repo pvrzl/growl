@@ -128,7 +128,7 @@ func (db Db) Model(data interface{}) Db {
 
 func (db Db) GenerateSelectRaw() string {
 	table := db.GetTableName()
-	var where, join, selct, offset, limit, order, raw string
+	var where, join, selct, offset, limit, order, raw, group string
 
 	for i, obj := range db.where {
 		if i != 0 {
@@ -159,8 +159,9 @@ func (db Db) GenerateSelectRaw() string {
 	offset = " OFFSET " + valid.ToString(db.offset)
 	limit = " LIMIT " + valid.ToString(db.limit)
 	order = db.orderBy
+	group = " GROUP BY " + db.group
 
-	raw = "[ SELECT " + selct + " FROM " + table + join + " WHERE " + where + limit + offset + order + " ][ Preload : " + strings.Join(db.preload, ",") + " ]"
+	raw = "[ SELECT " + selct + " FROM " + table + join + " WHERE " + where + group + limit + offset + order + " ][ Preload : " + strings.Join(db.preload, ",") + " ]"
 
 	// fmt.Println(raw)
 	return raw

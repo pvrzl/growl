@@ -23,6 +23,7 @@ type Db struct {
 	limit       int
 	offset      int
 	orderBy     string
+	group       string
 	tx          *gorm.DB
 	txMode      bool
 	growlTag    map[int]map[string]string

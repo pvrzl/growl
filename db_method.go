@@ -33,6 +33,13 @@ func (db Db) Preload(qry string) Db {
 	return db
 }
 
+func (db Db) Group(qry string) Db {
+	db.group = qry
+	db, tx := db.checkTx()
+	db.tx = tx.Group(qry)
+	return db
+}
+
 func (db Db) Join(qry string, params ...interface{}) Db {
 	db.join = append(db.join, dbWhereParams{
 		qry:    qry,

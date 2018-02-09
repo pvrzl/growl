@@ -239,7 +239,7 @@ func TestFind(t *testing.T) {
 	assert.Equal(t, "test01", testGet.Name)
 
 	testGet.Id = 0
-	testGet.Db().Where("id = ?", 2).First()
+	testGet.Db().Where("id = ?", 2).Group("").First()
 	assert.Equal(t, "test02", testGet.Name)
 
 	deleteTestTable()

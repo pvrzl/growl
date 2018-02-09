@@ -1,7 +1,6 @@
 package growl
 
 import (
-	"log"
 	"reflect"
 	"time"
 
@@ -69,7 +68,7 @@ func GetCache(key string, data interface{}) (err error) {
 		cacheData, found := LocalCache.Get(key)
 		if config.Misc.Log {
 			// fmt.Println("get local key", key)
-			log.Println("get local ", key, " found : ", found)
+			// log.Println("get local ", key, " found : ", found)
 			// fmt.Println("get local cachedata", cacheData)
 		}
 
@@ -86,7 +85,7 @@ func GetCache(key string, data interface{}) (err error) {
 		err = Codec().Get(key, data)
 		if config.Misc.Log {
 			// fmt.Println("get redis key", key)
-			log.Println("get redis ", key, " error : ", err)
+			// log.Println("get redis ", key, " error : ", err)
 			// fmt.Println("get redis data", data)
 		}
 
