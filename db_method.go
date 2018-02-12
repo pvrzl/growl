@@ -172,6 +172,14 @@ func (db Db) ForceUpdate() Db {
 		return db
 	}
 
+	if err := tx.First(db.data).Error; err != nil {
+		if !db.txMode {
+			// tx.Rollback()
+		}
+		db.error = err
+		return db
+	}
+
 	if !db.txMode {
 		// tx.Commit()
 	}
@@ -194,6 +202,14 @@ func (db Db) UpdateMap(data map[string]interface{}) Db {
 	db, tx := db.checkTx()
 
 	if err := tx.Update(data).Error; err != nil {
+		if !db.txMode {
+			// tx.Rollback()
+		}
+		db.error = err
+		return db
+	}
+
+	if err := tx.First(db.data).Error; err != nil {
 		if !db.txMode {
 			// tx.Rollback()
 		}
@@ -235,6 +251,14 @@ func (db Db) Update() Db {
 	}
 
 	if err := tx.Update(db.data).Error; err != nil {
+		if !db.txMode {
+			// tx.Rollback()
+		}
+		db.error = err
+		return db
+	}
+
+	if err := tx.First(db.data).Error; err != nil {
 		if !db.txMode {
 			// tx.Rollback()
 		}
