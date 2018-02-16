@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/homina/growl.svg?branch=master)](https://travis-ci.org/homina/growl)
 [![codecov](https://codecov.io/gh/homina/growl/branch/master/graph/badge.svg)](https://codecov.io/gh/homina/growl)
+[![](https://godoc.org/github.com/homina/growl?status.svg)](http://godoc.org/github.com/homina/growl)
 
 #### Overview
 Growl is another layer for https://github.com/jinzhu/gorm, https://github.com/go-redis/redis and https://github.com/patrickmn/go-cache
