@@ -305,7 +305,7 @@ func (db Db) First() Db {
 				idv := reflect.ValueOf(db.data).Elem().FieldByName("Id")
 				if idv.IsValid() {
 					id := valid.ToString(idv.Interface().(int))
-					if id != "" {
+					if id != "0" && id != "" {
 						lu := new(lookUp)
 						GetCache(db.LookupKey(id), lu)
 						lu.keys = append(lu.keys, key)
