@@ -1,0 +1,22 @@
+settings:
+  legacy:
+    force: false
+    interval: 0s
+server:
+  status: false
+  open: false
+  port: 5002
+  host: localhost
+schema:
+- name: growl
+  path: .
+  commands: {}
+  watcher:
+    paths:
+    - /
+    extensions:
+    - go
+    ignored_paths:
+    - .git
+    - .realize
+    - vendor

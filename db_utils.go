@@ -75,6 +75,10 @@ func (db Db) checkTag() Db {
 	return db
 }
 
+func (db Db) NewLookup() *lookUp {
+	return new(lookUp)
+}
+
 func (db Db) getTag(v reflect.Value, t reflect.Type) Db {
 
 	growlTag := make(map[int]map[string]string)
