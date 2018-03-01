@@ -97,7 +97,7 @@ func (db Db) Replace(data interface{}) Db {
 		idv := reflect.ValueOf(db.data).Elem().FieldByName("Id")
 		if idv.IsValid() {
 			id := valid.ToString(idv.Interface().(int))
-			if id != "" {
+			if id != "" && id != "0" {
 				DeleteLookup(db.LookupKey(id))
 			}
 		}
@@ -188,7 +188,7 @@ func (db Db) ForceUpdate() Db {
 		idv := reflect.ValueOf(db.data).Elem().FieldByName("Id")
 		if idv.IsValid() {
 			id := valid.ToString(idv.Interface().(int))
-			if id != "" {
+			if id != "" && id != "0" {
 				DeleteLookup(db.LookupKey(id))
 			}
 		}
@@ -225,7 +225,7 @@ func (db Db) UpdateMap(data map[string]interface{}) Db {
 		idv := reflect.ValueOf(db.data).Elem().FieldByName("Id")
 		if idv.IsValid() {
 			id := valid.ToString(idv.Interface().(int))
-			if id != "" {
+			if id != "" && id != "0" {
 				DeleteLookup(db.LookupKey(id))
 			}
 		}
@@ -274,7 +274,7 @@ func (db Db) Update() Db {
 		idv := reflect.ValueOf(db.data).Elem().FieldByName("Id")
 		if idv.IsValid() {
 			id := valid.ToString(idv.Interface().(int))
-			if id != "" {
+			if id != "" && id != "0" {
 				DeleteLookup(db.LookupKey(id))
 			}
 		}
@@ -333,7 +333,7 @@ func (db Db) First() Db {
 		idv := reflect.ValueOf(db.data).Elem().FieldByName("Id")
 		if idv.IsValid() {
 			id := valid.ToString(idv.Interface().(int))
-			if id != "" {
+			if id != "" && id != "0" {
 				lu := new(lookUp)
 				GetCache(db.LookupKey(id), lu)
 				lu.keys = append(lu.keys, key)
@@ -375,7 +375,7 @@ func (db Db) Find(data interface{}) Db {
 			idv := v.Index(i).FieldByName("Id")
 			if idv.IsValid() {
 				id := valid.ToString(idv.Interface().(int))
-				if id != "" {
+				if id != "" && id != "0" {
 					lu := new(lookUp)
 					GetCache(db.LookupKey(id), lu)
 					lu.keys = append(lu.keys, key)
@@ -458,7 +458,7 @@ func (db Db) Delete() Db {
 	if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
 		DeleteLookup(db.LookupKey("count"))
 
-		if id != "" {
+		if id != "" && id != "0" {
 			DeleteLookup(db.LookupKey(id))
 		}
 
