@@ -308,12 +308,12 @@ func (db Db) First() Db {
 					if id != "0" && id != "" {
 						lu := new(lookUp)
 						GetCache(db.LookupKey(id), lu)
-						lu.keys = append(lu.keys, key)
+						lu.Keys = append(lu.Keys, key)
 						SetCache(db.LookupKey(id), lu)
 					} else {
 						lu := new(lookUp)
 						GetCache(db.LookupKey("empty"), lu)
-						lu.keys = append(lu.keys, key)
+						lu.Keys = append(lu.Keys, key)
 						SetCache(db.LookupKey("empty"), lu)
 					}
 				}
@@ -336,7 +336,7 @@ func (db Db) First() Db {
 			if id != "" && id != "0" {
 				lu := new(lookUp)
 				GetCache(db.LookupKey(id), lu)
-				lu.keys = append(lu.keys, key)
+				lu.Keys = append(lu.Keys, key)
 				SetCache(db.LookupKey(id), lu)
 			}
 		}
@@ -378,14 +378,14 @@ func (db Db) Find(data interface{}) Db {
 				if id != "" && id != "0" {
 					lu := new(lookUp)
 					GetCache(db.LookupKey(id), lu)
-					lu.keys = append(lu.keys, key)
+					lu.Keys = append(lu.Keys, key)
 					SetCache(db.LookupKey(id), lu)
 				}
 			}
 		}
 		tableLU := new(lookUp)
 		GetCache(db.GetTableName(), tableLU)
-		tableLU.keys = append(tableLU.keys, key)
+		tableLU.Keys = append(tableLU.Keys, key)
 		SetCache(db.GetTableName(), tableLU)
 	}
 
@@ -420,7 +420,7 @@ func (db Db) Count(data interface{}) Db {
 		id := db.LookupKey("count")
 		lu := new(lookUp)
 		GetCache(id, lu)
-		lu.keys = append(lu.keys, key)
+		lu.Keys = append(lu.Keys, key)
 		SetCache(id, lu)
 	}
 

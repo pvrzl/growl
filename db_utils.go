@@ -80,7 +80,7 @@ func (db Db) NewLookup() *lookUp {
 }
 
 func (db Db) AppendLookup(lu *lookUp, key string) *lookUp {
-	lu.keys = append(lu.keys, key)
+	lu.Keys = append(lu.Keys, key)
 	return lu
 }
 
@@ -184,7 +184,7 @@ func (db Db) LookupKey(id string) string {
 func DeleteLookup(id string) {
 	lu := new(lookUp)
 	GetCache(id, lu)
-	for _, key := range lu.keys {
+	for _, key := range lu.Keys {
 		DeleteCache(key)
 	}
 	DeleteCache(id)

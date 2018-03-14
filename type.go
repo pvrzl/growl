@@ -32,5 +32,5 @@ type Db struct {
 }
 
 type lookUp struct {
-	keys []string
+	Keys []string
 }
