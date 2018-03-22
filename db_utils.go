@@ -58,6 +58,16 @@ func (db Db) checkTag() Db {
 		if growl, ok := db.growlTag[i]; ok {
 			if growlValue, ok2 := growl["exist"]; ok2 {
 				value := GetValue(v.Field(i))
+				if v, ok := value.(string); ok {
+					if v == "" {
+						return db
+					}
+				}
+				if v, ok := value.(int); ok {
+					if v == 0 {
+						return db
+					}
+				}
 				var dummy struct{}
 				_, tx := db.checkTx()
 				err := tx.Table(growlValue).Select(growl["existColumn"]).Where(growl["existColumn"]+" = ?", value).First(&dummy).Error
