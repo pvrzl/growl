@@ -291,6 +291,13 @@ func (db Db) First() Db {
 		if !db.txMode {
 			// tx.Commit()
 		}
+		idv := reflect.ValueOf(db.data).Elem().FieldByName("Id")
+		if idv.IsValid() {
+			id := valid.ToString(idv.Interface())
+			if id == "0" || id != "" {
+				db.error = gorm.ErrRecordNotFound
+			}
+		}
 		return db
 	}
 
