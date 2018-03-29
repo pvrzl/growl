@@ -3,6 +3,7 @@ package growl
 import (
 	"errors"
 	"fmt"
+	"log"
 	"reflect"
 	"strings"
 
@@ -164,25 +165,9 @@ func (db Db) GenerateSelectRaw() string {
 	table := db.GetTableName()
 	var where, join, selct, offset, limit, order, raw, group string
 
-	for i, obj := range db.where {
-		if i != 0 {
-			where += " AND "
-		}
-		where += "(" + obj.qry + ")"
-		for _, param := range obj.params {
-			join = strings.Replace(where, "?", fmt.Sprint(param), 1)
-		}
-	}
+	where = fmt.Sprint(db.where)
 
-	for i, obj := range db.join {
-		if i != 0 {
-			join += " AND "
-		}
-		join += "(" + obj.qry + ")"
-		for _, param := range obj.params {
-			join = strings.Replace(join, "?", fmt.Sprint(param), 1)
-		}
-	}
+	join = fmt.Sprint(db.join)
 
 	if db.selct == "" {
 		selct = "*"
@@ -197,7 +182,9 @@ func (db Db) GenerateSelectRaw() string {
 
 	raw = "[ SELECT " + selct + " FROM " + table + join + " WHERE " + where + group + limit + offset + order + " ][ Preload : " + strings.Join(db.preload, ",") + " ]"
 
-	// fmt.Println(raw)
+	if YamlConfig.Growl.Misc.Debug {
+		log.Println("raw query : ", raw)
+	}
 	return raw
 }
 

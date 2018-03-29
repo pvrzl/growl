@@ -16,18 +16,9 @@ func TestLoadConfig(t *testing.T) {
 
 func TestCheckConfig(t *testing.T) {
 	assert.Equal(t, nil, loadConfig("conf.yaml"))
-	YamlConfig.Growl.Database.Limit = 0
-	config, err := checkConfig(YamlConfig)
-	assert.Equal(t, nil, err)
-	assert.Equal(t, 10, config.Growl.Database.Limit)
-
-	YamlConfig.Growl.Database.TimeLayout = ""
-	config, err = checkConfig(YamlConfig)
-	assert.Equal(t, nil, err)
-	assert.Equal(t, "01/02/2006", config.Growl.Database.TimeLayout)
 
 	YamlConfig.Growl.Redis.Host = ""
-	config, err = checkConfig(YamlConfig)
+	config, err := checkConfig(YamlConfig)
 	assert.Equal(t, nil, err)
 	assert.Equal(t, "localhost", config.Growl.Redis.Host)
 

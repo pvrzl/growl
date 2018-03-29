@@ -5,51 +5,54 @@
 [![](https://godoc.org/github.com/homina/growl?status.svg)](http://godoc.org/github.com/homina/growl)
 
 #### Overview
+
 Growl is another layer for https://github.com/jinzhu/gorm, https://github.com/go-redis/redis and https://github.com/patrickmn/go-cache
 
-- Simple config file for db, redis
-- ORM like
-- Auto set/get cache on query
+* Simple config file for db, redis
+* ORM like
+* Auto set/get cache on query
 
 ##### Installation
+
 ```bash
 go get github.com/homina/growl
 ```
 
 ##### Import package in your project
+
 ```go
 import (
     "github.com/homina/growl"
 )
 ```
 
-#### Config file 
+#### Config file
+
 ```yaml
 growl:
   database:
-    driver: mysql 
+    driver: mysql
     url: root:@/
-    name: "growl_test?charset=utf8&parseTime=True&loc=Local&sql_mode='ALLOW_INVALID_DATES'" 
+    name: "growl_test?charset=utf8&parseTime=True&loc=Local&sql_mode='ALLOW_INVALID_DATES'"
     prefix:  
     singulartable: false # default : false
-    limit: 10 
-    maxlimit: 32 
+    limit: 10
+    maxlimit: 32
     timelayout: "02/01/2006"
   redis:
-    host: localhost 
-    port: "6379" 
-    password: 
+    host: localhost
+    port: "6379"
+    password:
     channel: "channel"
-    enable: true 
+    enable: true
   misc:
     localcache: true # enable go-cache
     log: true # enable gorm log
     flushatinit: true # flush cache at start
-
 ```
 
-
 #### Example
+
 ```go
 package main
 
@@ -126,4 +129,10 @@ func main() {
 ```
 
 #### Validation
+
 Reference : https://github.com/asaskevich/govalidator
+
+#### todo
+
+* debug mode
+* optimize raw

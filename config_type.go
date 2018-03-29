@@ -10,8 +10,6 @@ type growlYamlConfig struct {
 			Name          string
 			Prefix        string
 			SingularTable bool
-			Limit         int
-			TimeLayout    string
 		}
 		Redis struct {
 			Host     string
@@ -25,6 +23,7 @@ type growlYamlConfig struct {
 			LocalCache  bool
 			Log         bool
 			FlushAtInit bool
+			Debug       bool
 		}
 	}
 }

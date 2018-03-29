@@ -34,13 +34,6 @@ func loadConfig(path string) error {
 func checkConfig(yamlConfig growlYamlConfig) (growlYamlConfig, error) {
 
 	// set database default
-	if yamlConfig.Growl.Database.Limit <= 0 {
-		yamlConfig.Growl.Database.Limit = 10
-	}
-
-	if yamlConfig.Growl.Database.TimeLayout == "" {
-		yamlConfig.Growl.Database.TimeLayout = "01/02/2006"
-	}
 
 	// set redis default
 	if yamlConfig.Growl.Redis.Host == "" {

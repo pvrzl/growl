@@ -12,6 +12,7 @@ func (db Db) Where(qry string, params ...interface{}) Db {
 		qry:    qry,
 		params: params,
 	})
+	// log.Printf("db : %+v\n", db.where)
 	db, tx := db.checkTx()
 	db.tx = tx.Where(qry, params...)
 	return db
