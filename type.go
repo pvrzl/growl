@@ -17,6 +17,7 @@ type Db struct {
 	data        interface{}
 	where       []dbWhereParams
 	join        []dbWhereParams
+	or          []dbWhereParams
 	selct       string
 	preload     []string
 	association string

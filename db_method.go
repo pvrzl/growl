@@ -18,6 +18,17 @@ func (db Db) Where(qry string, params ...interface{}) Db {
 	return db
 }
 
+func (db Db) Or(qry string, params ...interface{}) Db {
+	db.or = append(db.or, dbWhereParams{
+		qry:    qry,
+		params: params,
+	})
+	// log.Printf("db : %+v\n", db.where)
+	db, tx := db.checkTx()
+	db.tx = tx.Or(qry, params...)
+	return db
+}
+
 func (db Db) Select(qry string, filters ...func(string) string) Db {
 	for _, filter := range filters {
 		qry = filter(qry)

@@ -166,6 +166,7 @@ func (db Db) GenerateSelectRaw() string {
 	var where, join, selct, offset, limit, order, raw, group string
 
 	where = fmt.Sprint(db.where)
+	or := fmt.Sprint(db.or)
 
 	join = fmt.Sprint(db.join)
 
@@ -180,7 +181,7 @@ func (db Db) GenerateSelectRaw() string {
 	order = db.orderBy
 	group = " GROUP BY " + db.group
 
-	raw = "[ SELECT " + selct + " FROM " + table + join + " WHERE " + where + group + limit + offset + order + " ][ Preload : " + strings.Join(db.preload, ",") + " ]"
+	raw = "[ SELECT " + selct + " FROM " + table + join + " WHERE " + where + "OR" + or + group + limit + offset + order + " ][ Preload : " + strings.Join(db.preload, ",") + " ]"
 
 	if YamlConfig.Growl.Misc.Debug {
 		log.Println("raw query : ", raw)
