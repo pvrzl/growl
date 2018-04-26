@@ -36,9 +36,6 @@ growl:
     name: "growl_test?charset=utf8&parseTime=True&loc=Local&sql_mode='ALLOW_INVALID_DATES'"
     prefix:  
     singulartable: false # default : false
-    limit: 10
-    maxlimit: 32
-    timelayout: "02/01/2006"
   redis:
     host: localhost
     port: "6379"
@@ -136,3 +133,9 @@ Reference : https://github.com/asaskevich/govalidator
 
 * debug mode
 * optimize raw
+
+### Test
+
+* docker run -d -p 6379:6379 --name=redis redis:latest
+* docker run -d -p 3306:3306 --name=mysql -e MYSQL_ALLOW_EMPTY_PASSWORD=yes mysql:5.7
+* make test

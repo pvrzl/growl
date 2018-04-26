@@ -14,16 +14,18 @@ type growlYamlConfig struct {
 		Redis struct {
 			Host     string
 			Port     string
-			Duration time.Duration
 			Password string
 			Channel  string
 			Enable   bool
+			duration time.Duration
 		}
 		Misc struct {
-			LocalCache  bool
-			Log         bool
-			FlushAtInit bool
-			Debug       bool
+			LocalCache               bool
+			Log                      bool
+			FlushAtInit              bool
+			Debug                    bool
+			DefaultCacheDuration     uint
+			DefaultCacheDurationUnit string
 		}
 	}
 }

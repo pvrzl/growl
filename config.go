@@ -44,7 +44,23 @@ func checkConfig(yamlConfig growlYamlConfig) (growlYamlConfig, error) {
 		yamlConfig.Growl.Redis.Port = "6379"
 	}
 
-	yamlConfig.Growl.Redis.Duration = 168 * time.Hour
+	if yamlConfig.Growl.Misc.DefaultCacheDuration != 0 && yamlConfig.Growl.Misc.DefaultCacheDurationUnit != "" {
+		switch yamlConfig.Growl.Misc.DefaultCacheDurationUnit {
+		case "hour":
+			yamlConfig.Growl.Redis.duration = time.Duration(yamlConfig.Growl.Misc.DefaultCacheDuration) * time.Hour
+		case "minute":
+
+			yamlConfig.Growl.Redis.duration = time.Duration(yamlConfig.Growl.Misc.DefaultCacheDuration) * time.Minute
+		case "second":
+
+			yamlConfig.Growl.Redis.duration = time.Duration(yamlConfig.Growl.Misc.DefaultCacheDuration) * time.Second
+		default:
+
+			yamlConfig.Growl.Redis.duration = time.Duration(yamlConfig.Growl.Misc.DefaultCacheDuration) * time.Minute
+		}
+	} else {
+		yamlConfig.Growl.Redis.duration = 1 * time.Hour
+	}
 
 	if yamlConfig.Growl.Database.Driver == "" {
 		return yamlConfig, ErrDbDriverRequired

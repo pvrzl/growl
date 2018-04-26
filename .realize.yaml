@@ -20,3 +20,7 @@ schema:
     - .git
     - .realize
     - vendor
+    scripts:
+    - type: before
+      command: go install -i
+      output: true
