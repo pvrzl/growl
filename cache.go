@@ -90,7 +90,7 @@ func GetCache(key string, data interface{}) (err error) {
 		}
 
 		if err == nil {
-			LocalCache.Set(key, data, gocache.DefaultExpiration)
+			LocalCache.Set(key, data, YamlConfig.Growl.Redis.duration)
 			return
 		}
 	}
@@ -109,7 +109,9 @@ func SetCache(key string, data interface{}, options ...interface{}) {
 
 	if len(options) >= 1 && len(options) == 1 {
 		if val, ok := options[0].(time.Duration); ok {
-			duration = val
+			if val.String() != "0s" {
+				duration = val
+			}
 		}
 	}
 

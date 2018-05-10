@@ -6,6 +6,7 @@ import (
 	"log"
 	"reflect"
 	"strings"
+	"time"
 
 	valid "github.com/asaskevich/govalidator"
 	"github.com/jinzhu/gorm"
@@ -47,6 +48,11 @@ func (db Db) SetTx(tx *gorm.DB) Db {
 		db.txMode = false
 	}
 
+	return db
+}
+
+func (db Db) SetCacheDuration(duration time.Duration) Db {
+	db.cacheDuration = duration
 	return db
 }
 
