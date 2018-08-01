@@ -57,8 +57,15 @@ func PingCache() error {
 }
 
 func FlushCache() {
-	Redis().FlushAll()
-	LocalCache.Flush()
+	config := YamlConfig.Growl
+
+	if config.Misc.LocalCache {
+		LocalCache.Flush()
+	}
+
+	if config.Redis.Enable {
+		Redis().FlushAll()
+	}
 }
 
 func GetCache(key string, data interface{}) (err error) {
