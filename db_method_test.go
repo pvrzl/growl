@@ -187,7 +187,7 @@ func TestDbJoin(t *testing.T) {
 
 	assert.Equal(t, "testUpdate", test.Name)
 
-	test.Db().Model(test).UpdateMap(map[string]interface{}{"name": "testUpdate02"})
+	test.Db().Where("id = ?", test.Id).UpdateMap(map[string]interface{}{"name": "testUpdate02"})
 	test.Db().First()
 	assert.Equal(t, "testUpdate02", test.Name)
 
