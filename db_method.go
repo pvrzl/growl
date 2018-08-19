@@ -319,23 +319,23 @@ func (db Db) First() Db {
 		}
 		if err == gorm.ErrRecordNotFound {
 			if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
-				key := MD5(db.GenerateSelectRaw())
-				SetCache(key, db.data, db.cacheDuration)
-				idv := reflect.ValueOf(db.data).Elem().FieldByName("Id")
-				if idv.IsValid() {
-					id := valid.ToString(idv.Interface())
-					if id != "0" && id != "" {
-						lu := new(lookUp)
-						GetCache(db.LookupKey(id), lu)
-						lu.Keys = append(lu.Keys, key)
-						SetCache(db.LookupKey(id), lu, db.cacheDuration)
-					} else {
-						lu := new(lookUp)
-						GetCache(db.LookupKey("empty"), lu)
-						lu.Keys = append(lu.Keys, key)
-						SetCache(db.LookupKey("empty"), lu, db.cacheDuration)
-					}
-				}
+				// key := MD5(db.GenerateSelectRaw())
+				// SetCache(key, db.data, db.cacheDuration)
+				// idv := reflect.ValueOf(db.data).Elem().FieldByName("Id")
+				// if idv.IsValid() {
+				// 	id := valid.ToString(idv.Interface())
+				// 	if id != "0" && id != "" {
+				// 		lu := new(lookUp)
+				// 		GetCache(db.LookupKey(id), lu)
+				// 		lu.Keys = append(lu.Keys, key)
+				// 		SetCache(db.LookupKey(id), lu, db.cacheDuration)
+				// 	} else {
+				// 		lu := new(lookUp)
+				// 		GetCache(db.LookupKey("empty"), lu)
+				// 		lu.Keys = append(lu.Keys, key)
+				// 		SetCache(db.LookupKey("empty"), lu, db.cacheDuration)
+				// 	}
+				// }
 			}
 		}
 		db.error = err
