@@ -64,7 +64,7 @@ func FlushCache() {
 	}
 
 	if config.Redis.Enable {
-		Redis().FlushAll()
+		Redis().FlushDB()
 	}
 }
 
