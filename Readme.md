@@ -101,7 +101,7 @@ func main() {
   // &{Name:test01 Id:1}
 
   test.Name = "test02"
-  err = test.Db().Model(test).Update().Error()
+  err = test.Db().Model(test).Where("id = ?",test.Id).Update().Error()
   if err != nil {
     fmt.Println(err)
     return
@@ -115,7 +115,7 @@ func main() {
   fmt.Printf("%+v", test)
   // &{Name:test02 Id:1}
 
-  err = test.Db().Delete().Error()
+  err = test.Db().Where("id = ?",test.Id).Delete().Error()
   if err != nil {
     fmt.Println(err)
     return
