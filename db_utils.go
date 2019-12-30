@@ -8,9 +8,9 @@ import (
 	"strings"
 	"time"
 
-	valid "github.com/asaskevich/govalidator"
 	"github.com/jinzhu/gorm"
 	"github.com/jinzhu/inflection"
+	valid "gopkg.in/asaskevich/govalidator.v9"
 )
 
 func (db Db) GetTableName() string {

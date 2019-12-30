@@ -3,7 +3,7 @@ package growl
 import (
 	"reflect"
 
-	valid "github.com/asaskevich/govalidator"
+	valid "gopkg.in/asaskevich/govalidator.v9"
 	"github.com/jinzhu/gorm"
 )
 
