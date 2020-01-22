@@ -3,8 +3,8 @@ package growl
 import (
 	"reflect"
 
-	valid "gopkg.in/asaskevich/govalidator.v9"
 	"github.com/jinzhu/gorm"
+	valid "gopkg.in/asaskevich/govalidator.v9"
 )
 
 func (db Db) Where(qry string, params ...interface{}) Db {
@@ -348,7 +348,7 @@ func (db Db) First() Db {
 
 	if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
 		key := MD5(db.GenerateSelectRaw())
-		SetCache(key, db.data, db.cacheDuration)
+		go SetCache(key, db.data, db.cacheDuration)
 		idv := reflect.ValueOf(db.data).Elem().FieldByName("Id")
 		if idv.IsValid() {
 			id := valid.ToString(idv.Interface())
@@ -356,7 +356,7 @@ func (db Db) First() Db {
 				lu := new(lookUp)
 				GetCache(db.LookupKey(id), lu)
 				lu.Keys = append(lu.Keys, key)
-				SetCache(db.LookupKey(id), lu, db.cacheDuration)
+				go SetCache(db.LookupKey(id), lu, db.cacheDuration)
 			}
 		}
 	}
@@ -388,7 +388,7 @@ func (db Db) Find(data interface{}) Db {
 
 	if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
 		key := MD5(db.GenerateSelectRaw())
-		SetCache(key, data, db.cacheDuration)
+		go SetCache(key, data, db.cacheDuration)
 		v := reflect.ValueOf(data).Elem()
 		for i := 0; i < v.Len(); i++ {
 			idv := v.Index(i).FieldByName("Id")
@@ -398,14 +398,14 @@ func (db Db) Find(data interface{}) Db {
 					lu := new(lookUp)
 					GetCache(db.LookupKey(id), lu)
 					lu.Keys = append(lu.Keys, key)
-					SetCache(db.LookupKey(id), lu, db.cacheDuration)
+					go SetCache(db.LookupKey(id), lu, db.cacheDuration)
 				}
 			}
 		}
 		tableLU := new(lookUp)
 		GetCache(db.GetTableName(), tableLU)
 		tableLU.Keys = append(tableLU.Keys, key)
-		SetCache(db.GetTableName(), tableLU, db.cacheDuration)
+		go SetCache(db.GetTableName(), tableLU, db.cacheDuration)
 	}
 
 	return db
@@ -435,12 +435,12 @@ func (db Db) Count(data interface{}) Db {
 
 	if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
 		key := MD5(db.GenerateSelectRaw()) + "-count"
-		SetCache(key, data, db.cacheDuration)
+		go SetCache(key, data, db.cacheDuration)
 		id := db.LookupKey("count")
 		lu := new(lookUp)
 		GetCache(id, lu)
 		lu.Keys = append(lu.Keys, key)
-		SetCache(id, lu, db.cacheDuration)
+		go SetCache(id, lu, db.cacheDuration)
 	}
 
 	return db
