@@ -13,6 +13,7 @@ import (
 
 var connRedis *redis.Client
 var LocalCache = gocache.New(YamlConfig.Growl.Redis.duration, 30*time.Minute)
+var codec *cache.Codec
 
 func connectRedis() *redis.Client {
 	config := YamlConfig.Growl
@@ -89,7 +90,7 @@ func GetCache(key string, data interface{}) (err error) {
 	}
 
 	if config.Redis.Enable {
-		err = Codec().Get(key, data)
+		err = codec.Get(key, data)
 		if config.Misc.Log {
 			// fmt.Println("get redis key", key)
 			// log.Println("get redis ", key, " error : ", err)
@@ -127,7 +128,7 @@ func SetCache(key string, data interface{}, options ...interface{}) {
 	}
 
 	if config.Redis.Enable {
-		Codec().Set(&cache.Item{
+		codec.Set(&cache.Item{
 			Key:        key,
 			Object:     data,
 			Expiration: duration,
@@ -141,6 +142,6 @@ func DeleteCache(key string) {
 		LocalCache.Delete(key)
 	}
 	if config.Redis.Enable {
-		Codec().Delete(key)
+		codec.Delete(key)
 	}
 }

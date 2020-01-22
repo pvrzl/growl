@@ -28,6 +28,8 @@ func loadConfig(path string) error {
 		FlushCache()
 	}
 
+	codec = Codec()
+
 	return nil
 }
 
