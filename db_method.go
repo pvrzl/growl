@@ -154,7 +154,7 @@ func (db Db) Save() Db {
 	if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
 		go DeleteLookup(db.LookupKey("count"))
 		go DeleteLookup(db.LookupKey("empty"))
-		go DeleteLookup(db.GetTableName())
+		DeleteLookup(db.GetTableName())
 	}
 
 	return db
@@ -238,7 +238,7 @@ func (db Db) UpdateMap(data map[string]interface{}) Db {
 		if idv.IsValid() {
 			id := valid.ToString(idv.Interface())
 			if id != "" && id != "0" {
-				go DeleteLookup(db.LookupKey(id))
+				DeleteLookup(db.LookupKey(id))
 			}
 		}
 	}
@@ -287,7 +287,7 @@ func (db Db) Update() Db {
 		if idv.IsValid() {
 			id := valid.ToString(idv.Interface())
 			if id != "" && id != "0" {
-				go DeleteLookup(db.LookupKey(id))
+				DeleteLookup(db.LookupKey(id))
 			}
 		}
 	}
