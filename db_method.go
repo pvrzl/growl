@@ -110,7 +110,7 @@ func (db Db) Replace(data interface{}) Db {
 		if idv.IsValid() {
 			id := valid.ToString(idv.Interface())
 			if id != "" && id != "0" {
-				DeleteLookup(db.LookupKey(id))
+				go DeleteLookup(db.LookupKey(id))
 			}
 		}
 	}
@@ -152,9 +152,9 @@ func (db Db) Save() Db {
 	}
 
 	if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
-		DeleteLookup(db.LookupKey("count"))
-		DeleteLookup(db.LookupKey("empty"))
-		DeleteLookup(db.GetTableName())
+		go DeleteLookup(db.LookupKey("count"))
+		go DeleteLookup(db.LookupKey("empty"))
+		go DeleteLookup(db.GetTableName())
 	}
 
 	return db
@@ -201,7 +201,7 @@ func (db Db) ForceUpdate() Db {
 		if idv.IsValid() {
 			id := valid.ToString(idv.Interface())
 			if id != "" && id != "0" {
-				DeleteLookup(db.LookupKey(id))
+				go DeleteLookup(db.LookupKey(id))
 			}
 		}
 	}
@@ -238,7 +238,7 @@ func (db Db) UpdateMap(data map[string]interface{}) Db {
 		if idv.IsValid() {
 			id := valid.ToString(idv.Interface())
 			if id != "" && id != "0" {
-				DeleteLookup(db.LookupKey(id))
+				go DeleteLookup(db.LookupKey(id))
 			}
 		}
 	}
@@ -287,7 +287,7 @@ func (db Db) Update() Db {
 		if idv.IsValid() {
 			id := valid.ToString(idv.Interface())
 			if id != "" && id != "0" {
-				DeleteLookup(db.LookupKey(id))
+				go DeleteLookup(db.LookupKey(id))
 			}
 		}
 	}
@@ -454,13 +454,13 @@ func (db Db) Count(data interface{}) Db {
 
 func (db Db) Delete() Db {
 	db, tx := db.checkTx()
-	if err := tx.First(db.data).Error; err != nil {
-		if !db.txMode {
-			// tx.Rollback()
-		}
-		db.error = err
-		return db
-	}
+	// if err := tx.First(db.data).Error; err != nil {
+	// if !db.txMode {
+	// tx.Rollback()
+	// }
+	// db.error = err
+	// return db
+	// }
 
 	var id string
 	idv := reflect.ValueOf(db.data).Elem().FieldByName("Id")
@@ -476,18 +476,18 @@ func (db Db) Delete() Db {
 		return db
 	}
 
-	if !db.txMode {
-		// tx.Commit()
-	}
+	// if !db.txMode {
+	// tx.Commit()
+	// }
 
 	if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
-		DeleteLookup(db.LookupKey("count"))
+		go DeleteLookup(db.LookupKey("count"))
 
 		if id != "" && id != "0" {
-			DeleteLookup(db.LookupKey(id))
+			go DeleteLookup(db.LookupKey(id))
 		}
 
-		DeleteLookup(db.GetTableName())
+		go DeleteLookup(db.GetTableName())
 
 	}
 
