@@ -119,6 +119,8 @@ func (db Db) Replace(data interface{}) Db {
 }
 
 func (db Db) Save() Db {
+	db.lock.Lock()
+	defer db.lock.Unlock()
 	if _, err := valid.ValidateStruct(db.data); err != nil {
 		db.error = err
 		return db
@@ -161,6 +163,8 @@ func (db Db) Save() Db {
 }
 
 func (db Db) ForceUpdate() Db {
+	db.lock.Lock()
+	defer db.lock.Unlock()
 	if _, err := valid.ValidateStruct(db.data); err != nil {
 		db.error = err
 		return db
@@ -210,7 +214,8 @@ func (db Db) ForceUpdate() Db {
 }
 
 func (db Db) UpdateMap(data map[string]interface{}) Db {
-
+	db.lock.Lock()
+	defer db.lock.Unlock()
 	db, tx := db.checkTx()
 
 	if err := tx.Table(db.GetTableName()).Update(data).Error; err != nil {
@@ -247,6 +252,8 @@ func (db Db) UpdateMap(data map[string]interface{}) Db {
 }
 
 func (db Db) Update() Db {
+	db.lock.Lock()
+	defer db.lock.Unlock()
 	if _, err := valid.ValidateStruct(db.data); err != nil {
 		db.error = err
 		return db
@@ -296,6 +303,8 @@ func (db Db) Update() Db {
 }
 
 func (db Db) First() Db {
+	db.lock.Lock()
+	defer db.lock.Unlock()
 	db.limit = 1
 	err := GetCache(MD5(db.GenerateSelectRaw()), db.data)
 	db, tx := db.checkTx()
@@ -367,6 +376,8 @@ func (db Db) First() Db {
 }
 
 func (db Db) Find(data interface{}) Db {
+	db.lock.Lock()
+	defer db.lock.Unlock()
 	err := GetCache(MD5(db.GenerateSelectRaw()), data)
 	db, tx := db.checkTx()
 	if err == nil {
@@ -416,6 +427,8 @@ func (db Db) Find(data interface{}) Db {
 }
 
 func (db Db) Count(data interface{}) Db {
+	db.lock.Lock()
+	defer db.lock.Unlock()
 	err := GetCache(MD5(db.GenerateSelectRaw())+"-count", data)
 	db, tx := db.checkTx()
 	if err == nil {
@@ -453,6 +466,8 @@ func (db Db) Count(data interface{}) Db {
 }
 
 func (db Db) Delete() Db {
+	db.lock.Lock()
+	defer db.lock.Unlock()
 	db, tx := db.checkTx()
 	// if err := tx.First(db.data).Error; err != nil {
 	// if !db.txMode {

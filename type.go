@@ -1,6 +1,7 @@
 package growl
 
 import (
+	"sync"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -33,6 +34,7 @@ type Db struct {
 	jsonTag       map[int]string
 	cacheDuration time.Duration
 	error         error
+	lock          sync.Mutex
 }
 
 type lookUp struct {
