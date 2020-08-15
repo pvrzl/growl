@@ -1,6 +1,7 @@
 package growl
 
 import (
+	"fmt"
 	"reflect"
 
 	"github.com/jinzhu/gorm"
@@ -356,6 +357,7 @@ func (db Db) First() Db {
 	}
 
 	go func() {
+		defer exception()
 		if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
 			key := MD5(db.GenerateSelectRaw())
 			SetCache(key, db.data, db.cacheDuration)
@@ -400,6 +402,7 @@ func (db Db) Find(data interface{}) Db {
 	}
 
 	go func() {
+		defer exception()
 		if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
 			key := MD5(db.GenerateSelectRaw())
 			SetCache(key, data, db.cacheDuration)
@@ -451,6 +454,7 @@ func (db Db) Count(data interface{}) Db {
 	}
 
 	go func() {
+		defer exception()
 		if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
 			key := MD5(db.GenerateSelectRaw()) + "-count"
 			SetCache(key, data, db.cacheDuration)
@@ -507,4 +511,10 @@ func (db Db) Delete() Db {
 	}
 
 	return db
+}
+
+func exception() {
+	if r := recover(); r != nil {
+		fmt.Printf("something goes wrong : %+v\n", r)
+	}
 }
