@@ -2,6 +2,7 @@ package growl
 
 import (
 	"reflect"
+	"sync"
 	"time"
 
 	"github.com/go-redis/cache"
@@ -13,7 +14,13 @@ import (
 
 var connRedis *redis.Client
 var LocalCache = gocache.New(YamlConfig.Growl.Redis.duration, 30*time.Minute)
-var codec *cache.Codec
+
+type codecStruct struct {
+	codec *cache.Codec
+	sync  sync.Mutex
+}
+
+var codec codecStruct
 
 func connectRedis() *redis.Client {
 	config := YamlConfig.Growl
@@ -40,14 +47,16 @@ func Redis() *redis.Client {
 
 }
 
-func Codec() *cache.Codec {
-	return &cache.Codec{
-		Redis: Redis(),
-		Marshal: func(v interface{}) ([]byte, error) {
-			return msgpack.Marshal(v)
-		},
-		Unmarshal: func(b []byte, v interface{}) error {
-			return msgpack.Unmarshal(b, v)
+func Codec() codecStruct {
+	return codecStruct{
+		codec: &cache.Codec{
+			Redis: Redis(),
+			Marshal: func(v interface{}) ([]byte, error) {
+				return msgpack.Marshal(v)
+			},
+			Unmarshal: func(b []byte, v interface{}) error {
+				return msgpack.Unmarshal(b, v)
+			},
 		},
 	}
 }
@@ -70,6 +79,8 @@ func FlushCache() {
 }
 
 func GetCache(key string, data interface{}) (err error) {
+	codec.sync.Lock()
+	defer codec.sync.Unlock()
 	config := YamlConfig.Growl
 
 	if config.Misc.LocalCache {
@@ -90,7 +101,7 @@ func GetCache(key string, data interface{}) (err error) {
 	}
 
 	if config.Redis.Enable {
-		err = codec.Get(key, data)
+		err = codec.codec.Get(key, data)
 		if config.Misc.Log {
 			// fmt.Println("get redis key", key)
 			// log.Println("get redis ", key, " error : ", err)
@@ -111,6 +122,8 @@ func GetCache(key string, data interface{}) (err error) {
 }
 
 func SetCache(key string, data interface{}, options ...interface{}) {
+	codec.sync.Lock()
+	defer codec.sync.Unlock()
 	config := YamlConfig.Growl
 
 	duration := config.Redis.duration
@@ -128,7 +141,7 @@ func SetCache(key string, data interface{}, options ...interface{}) {
 	}
 
 	if config.Redis.Enable {
-		codec.Set(&cache.Item{
+		codec.codec.Set(&cache.Item{
 			Key:        key,
 			Object:     data,
 			Expiration: duration,
@@ -137,11 +150,13 @@ func SetCache(key string, data interface{}, options ...interface{}) {
 }
 
 func DeleteCache(key string) {
+	codec.sync.Lock()
+	defer codec.sync.Unlock()
 	config := YamlConfig.Growl
 	if config.Misc.LocalCache {
 		LocalCache.Delete(key)
 	}
 	if config.Redis.Enable {
-		codec.Delete(key)
+		codec.codec.Delete(key)
 	}
 }
