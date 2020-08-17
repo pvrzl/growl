@@ -357,7 +357,8 @@ func (db Db) First() Db {
 	}
 
 	go func() {
-		defer exception()
+		db.lock.Lock()
+		defer db.lock.Unlock()
 		if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
 			key := MD5(db.GenerateSelectRaw())
 			SetCache(key, db.data, db.cacheDuration)
@@ -402,7 +403,8 @@ func (db Db) Find(data interface{}) Db {
 	}
 
 	go func() {
-		defer exception()
+		db.lock.Lock()
+		defer db.lock.Unlock()
 		if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
 			key := MD5(db.GenerateSelectRaw())
 			SetCache(key, data, db.cacheDuration)
@@ -454,7 +456,8 @@ func (db Db) Count(data interface{}) Db {
 	}
 
 	go func() {
-		defer exception()
+		db.lock.Lock()
+		defer db.lock.Unlock()
 		if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
 			key := MD5(db.GenerateSelectRaw()) + "-count"
 			SetCache(key, data, db.cacheDuration)
