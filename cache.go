@@ -22,6 +22,10 @@ type codecStruct struct {
 
 var codec *codecStruct
 
+func Cache() *codecStruct {
+	return codec
+}
+
 func connectRedis() *redis.Client {
 	config := YamlConfig.Growl
 	return redis.NewClient(&redis.Options{
