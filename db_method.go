@@ -346,22 +346,22 @@ func (db Db) First() Db {
 		// tx.Commit()
 	}
 
-	go func() {
-		if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
-			key := MD5(db.GenerateSelectRaw())
-			codec.SetCache(key, db.data, db.cacheDuration)
-			idv := reflect.ValueOf(db.data).Elem().FieldByName("Id")
-			if idv.IsValid() {
-				id := valid.ToString(idv.Interface())
-				if id != "" && id != "0" {
-					lu := new(lookUp)
-					codec.GetCache(db.LookupKey(id), lu)
-					lu.Keys = append(lu.Keys, key)
-					codec.SetCache(db.LookupKey(id), lu, db.cacheDuration)
-				}
+	// go func() {
+	if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
+		key := MD5(db.GenerateSelectRaw())
+		codec.SetCache(key, db.data, db.cacheDuration)
+		idv := reflect.ValueOf(db.data).Elem().FieldByName("Id")
+		if idv.IsValid() {
+			id := valid.ToString(idv.Interface())
+			if id != "" && id != "0" {
+				lu := new(lookUp)
+				codec.GetCache(db.LookupKey(id), lu)
+				lu.Keys = append(lu.Keys, key)
+				codec.SetCache(db.LookupKey(id), lu, db.cacheDuration)
 			}
 		}
-	}()
+	}
+	// }()
 
 	return db
 }
@@ -388,29 +388,29 @@ func (db Db) Find(data interface{}) Db {
 		// tx.Commit()
 	}
 
-	go func() {
-		if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
-			key := MD5(db.GenerateSelectRaw())
-			codec.SetCache(key, data, db.cacheDuration)
-			v := reflect.ValueOf(data).Elem()
-			for i := 0; i < v.Len(); i++ {
-				idv := v.Index(i).FieldByName("Id")
-				if idv.IsValid() {
-					id := valid.ToString(idv.Interface())
-					if id != "" && id != "0" {
-						lu := new(lookUp)
-						codec.GetCache(db.LookupKey(id), lu)
-						lu.Keys = append(lu.Keys, key)
-						codec.SetCache(db.LookupKey(id), lu, db.cacheDuration)
-					}
+	// go func() {
+	if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
+		key := MD5(db.GenerateSelectRaw())
+		codec.SetCache(key, data, db.cacheDuration)
+		v := reflect.ValueOf(data).Elem()
+		for i := 0; i < v.Len(); i++ {
+			idv := v.Index(i).FieldByName("Id")
+			if idv.IsValid() {
+				id := valid.ToString(idv.Interface())
+				if id != "" && id != "0" {
+					lu := new(lookUp)
+					codec.GetCache(db.LookupKey(id), lu)
+					lu.Keys = append(lu.Keys, key)
+					codec.SetCache(db.LookupKey(id), lu, db.cacheDuration)
 				}
 			}
-			tableLU := new(lookUp)
-			codec.GetCache(db.GetTableName(), tableLU)
-			tableLU.Keys = append(tableLU.Keys, key)
-			codec.SetCache(db.GetTableName(), tableLU, db.cacheDuration)
 		}
-	}()
+		tableLU := new(lookUp)
+		codec.GetCache(db.GetTableName(), tableLU)
+		tableLU.Keys = append(tableLU.Keys, key)
+		codec.SetCache(db.GetTableName(), tableLU, db.cacheDuration)
+	}
+	// }()
 
 	return db
 }
@@ -437,17 +437,17 @@ func (db Db) Count(data interface{}) Db {
 		// tx.Commit()
 	}
 
-	go func() {
-		if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
-			key := MD5(db.GenerateSelectRaw()) + "-count"
-			codec.SetCache(key, data, db.cacheDuration)
-			id := db.LookupKey("count")
-			lu := new(lookUp)
-			codec.GetCache(id, lu)
-			lu.Keys = append(lu.Keys, key)
-			codec.SetCache(id, lu, db.cacheDuration)
-		}
-	}()
+	// go func() {
+	if YamlConfig.Growl.Redis.Enable || YamlConfig.Growl.Misc.LocalCache {
+		key := MD5(db.GenerateSelectRaw()) + "-count"
+		codec.SetCache(key, data, db.cacheDuration)
+		id := db.LookupKey("count")
+		lu := new(lookUp)
+		codec.GetCache(id, lu)
+		lu.Keys = append(lu.Keys, key)
+		codec.SetCache(id, lu, db.cacheDuration)
+	}
+	// }()
 
 	return db
 }
