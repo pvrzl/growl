@@ -82,6 +82,10 @@ func FlushCache() {
 	}
 }
 
+func GetCache(key string, data interface{}, options ...interface{}) error {
+	return codec.GetCache(key, data)
+}
+
 func (codec *codecStruct) GetCache(key string, data interface{}) (err error) {
 	codec.sync.Lock()
 	defer codec.sync.Unlock()
@@ -123,6 +127,10 @@ func (codec *codecStruct) GetCache(key string, data interface{}) (err error) {
 	}
 
 	return
+}
+
+func SetCache(key string, data interface{}, options ...interface{}) {
+	codec.SetCache(key, data, options...)
 }
 
 func (codec *codecStruct) SetCache(key string, data interface{}, options ...interface{}) {
