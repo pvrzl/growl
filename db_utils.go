@@ -202,11 +202,11 @@ func (db Db) LookupKey(id string) string {
 
 func DeleteLookup(id string) {
 	lu := new(lookUp)
-	GetCache(id, lu)
+	codec.GetCache(id, lu)
 	for _, key := range lu.Keys {
-		DeleteCache(key)
+		codec.DeleteCache(key)
 	}
-	DeleteCache(id)
+	codec.DeleteCache(id)
 }
 
 func (db Db) SetData(data interface{}) Db {

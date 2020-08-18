@@ -20,7 +20,7 @@ type codecStruct struct {
 	sync  sync.Mutex
 }
 
-var codec codecStruct
+var codec *codecStruct
 
 func connectRedis() *redis.Client {
 	config := YamlConfig.Growl
@@ -47,10 +47,10 @@ func Redis() *redis.Client {
 
 }
 
-func Codec() codecStruct {
-	return codecStruct{
+func Codec() *codecStruct {
+	return &codecStruct{
 		codec: &cache.Codec{
-			Redis: Redis(),
+			Redis: connRedis,
 			Marshal: func(v interface{}) ([]byte, error) {
 				return msgpack.Marshal(v)
 			},
@@ -78,7 +78,7 @@ func FlushCache() {
 	}
 }
 
-func GetCache(key string, data interface{}) (err error) {
+func (codec *codecStruct) GetCache(key string, data interface{}) (err error) {
 	codec.sync.Lock()
 	defer codec.sync.Unlock()
 	config := YamlConfig.Growl
@@ -121,7 +121,7 @@ func GetCache(key string, data interface{}) (err error) {
 	return
 }
 
-func SetCache(key string, data interface{}, options ...interface{}) {
+func (codec *codecStruct) SetCache(key string, data interface{}, options ...interface{}) {
 	codec.sync.Lock()
 	defer codec.sync.Unlock()
 	config := YamlConfig.Growl
@@ -149,7 +149,7 @@ func SetCache(key string, data interface{}, options ...interface{}) {
 	}
 }
 
-func DeleteCache(key string) {
+func (codec *codecStruct) DeleteCache(key string) {
 	codec.sync.Lock()
 	defer codec.sync.Unlock()
 	config := YamlConfig.Growl

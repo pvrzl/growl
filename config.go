@@ -28,6 +28,7 @@ func loadConfig(path string) error {
 		FlushCache()
 	}
 
+	connRedis = Redis()
 	codec = Codec()
 
 	return nil
