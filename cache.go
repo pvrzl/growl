@@ -14,6 +14,7 @@ import (
 
 var connRedis *redis.Client
 var LocalCache = gocache.New(YamlConfig.Growl.Redis.duration, 30*time.Minute)
+var redisOnce sync.Once
 
 type codecStruct struct {
 	codec *cache.Codec
@@ -36,16 +37,10 @@ func connectRedis() *redis.Client {
 }
 
 func Redis() *redis.Client {
-	if connRedis == nil {
-		connRedis = connectRedis()
-		return connRedis
-	}
 
-	_, err := connRedis.Ping().Result()
-	if err != nil {
-		connRedis.Close()
+	redisOnce.Do(func() {
 		connRedis = connectRedis()
-	}
+	})
 
 	return connRedis
 

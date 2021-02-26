@@ -3,26 +3,22 @@ package growl
 import (
 	"errors"
 	"log"
+	"sync"
 
 	"github.com/jinzhu/gorm"
 )
 
 var connDb *gorm.DB
+var dbOnce sync.Once
 
 func Conn() (db *gorm.DB, err error) {
 
-	if connDb == nil {
+	dbOnce.Do(func() {
 		connDb, err = dbConnect()
-		return connDb, err
-	} else {
-		err = connDb.DB().Ping()
-	}
-
-	if err != nil {
-		connDb.Close()
-		connDb, err = dbConnect()
-		return connDb, err
-	}
+		if err != nil {
+			panic(err)
+		}
+	})
 
 	return connDb, nil
 }
