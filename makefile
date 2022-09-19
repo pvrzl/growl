@@ -4,7 +4,7 @@ TARGET := growl
 
 # These will be provided to the target
 VERSION := 0.0.1
-MAINTENERS := ef(***REMOVED***)
+MAINTENERS := ef(xxx@gmail.com)
 # Use linker flags to provide version/build settings to the target
 LDFLAGS:=-ldflags "-X main.Version=$(VERSION) -X main.Mainteners=$(MAINTENERS)"
 
